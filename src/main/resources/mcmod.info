@@ -1,0 +1,16 @@
+[
+{
+  "modid": "redsilicon",
+  "name": "Red Silicon",
+  "description": "An efficient logic circuit mod.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["liamtuan"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

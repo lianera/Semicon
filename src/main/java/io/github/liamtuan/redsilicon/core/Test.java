@@ -1,10 +1,11 @@
-package io.github.liamtuan.redsilicon;
-
-import io.github.liamtuan.redsilicon.core.*;
-
-import java.util.Arrays;
+package io.github.liamtuan.redsilicon.core;
 
 public class Test {
+
+    public static void main(String[] args) {
+        Test t = new Test();
+        t.testAll();
+    }
     public void testAll(){
         if(!gateTest())
             System.out.println("gate test failed");
