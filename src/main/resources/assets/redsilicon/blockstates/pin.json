@@ -1,0 +1,38 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "redsilicon:pin"
+  },
+  "variants": {
+    "state": {
+      "true": {
+        "textures": {
+          "down": "redsilicon:blocks/gate_blank",
+          "up": "redsilicon:blocks/pin",
+          "north": "redsilicon:blocks/gate_blank",
+          "east": "redsilicon:blocks/gate_blank",
+          "south": "redsilicon:blocks/off",
+          "west": "redsilicon:blocks/gate_blank",
+          "particle": "redsilicon:blocks/pin"
+        }
+      },
+      "false": {
+        "textures": {
+          "down": "redsilicon:blocks/blank_on",
+          "up": "redsilicon:blocks/pin_on",
+          "north": "redsilicon:blocks/blank_on",
+          "east": "redsilicon:blocks/blank_on",
+          "south": "redsilicon:blocks/on",
+          "west": "redsilicon:blocks/blank_on",
+          "particle": "redsilicon:blocks/pin_on"
+        }
+      }
+    },
+    "facing": {
+      "north": {"y": 0},
+      "east": {"y": 90},
+      "south": {"y": 180},
+      "west": {"y": 270}
+    }
+  }
+}

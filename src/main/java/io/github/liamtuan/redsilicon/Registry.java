@@ -1,8 +1,6 @@
 package io.github.liamtuan.redsilicon;
 
-import io.github.liamtuan.redsilicon.blocks.BlockAndGate;
-import io.github.liamtuan.redsilicon.blocks.BlockNotGate;
-import io.github.liamtuan.redsilicon.blocks.BlockOrGate;
+import io.github.liamtuan.redsilicon.blocks.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -19,15 +17,26 @@ public class Registry {
     public static Block andgate;
     public static Block orgate;
     public static Block notgate;
+    public static Block wire_bar;
+    public static Block wire_corner;
+    public static Block wire_t;
+    public static Block wire_cross;
 
     static void preInit(){
         andgate = new BlockAndGate();
         orgate = new BlockOrGate();
         notgate = new BlockNotGate();
+        wire_bar = new BlockWireBar();
+        wire_corner = new BlockWireCorner();
+        wire_t = new BlockWireT();
+        wire_cross = new BlockWireCross();
     }
 
     static Block[] allBlocks(){
-        return new Block[]{andgate, orgate, notgate};
+        return new Block[]{
+                andgate, orgate, notgate,
+                wire_bar, wire_corner, wire_t, wire_cross
+        };
     }
 
     @SubscribeEvent
