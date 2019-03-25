@@ -1,0 +1,13 @@
+tile.andgate.name=And Gate
+tile.orgate.name=Or Gate
+tile.notgate.name=Not Gate
+
+tile.wirebar.name=Wire
+tile.wirecorner.name=Wire
+tile.wiret.name=Wire
+tile.wirecross.name=Wire
+tile.wireall.name=Wire
+
+tile.pin.name=Pin
+tile.clock.name=Clock
+tile.led.name=LED

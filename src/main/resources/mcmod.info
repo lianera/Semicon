@@ -1,7 +1,7 @@
 [
 {
-  "modid": "redsilicon",
-  "name": "Red Silicon",
+  "modid": "semicon",
+  "name": "Semicon",
   "description": "An efficient logic circuit mod.",
   "version": "${version}",
   "mcversion": "${mcversion}",

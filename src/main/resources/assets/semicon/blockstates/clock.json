@@ -1,0 +1,38 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "semicon:clock"
+  },
+  "variants": {
+    "state": {
+      "true": {
+        "textures": {
+          "down": "semicon:blocks/gate_blank",
+          "up": "semicon:blocks/clock",
+          "north": "semicon:blocks/y_port",
+          "east": "semicon:blocks/gate_blank",
+          "south": "semicon:blocks/off",
+          "west": "semicon:blocks/gate_blank",
+          "particle": "semicon:blocks/clock"
+        }
+      },
+      "false": {
+        "textures": {
+          "down": "semicon:blocks/blank_on",
+          "up": "semicon:blocks/clock_on",
+          "north": "semicon:blocks/y_port_on",
+          "east": "semicon:blocks/blank_on",
+          "south": "semicon:blocks/on",
+          "west": "semicon:blocks/blank_on",
+          "particle": "semicon:blocks/clock_on"
+        }
+      }
+    },
+    "facing": {
+      "north": {"y": 0},
+      "east": {"y": 90},
+      "south": {"y": 180},
+      "west": {"y": 270}
+    }
+  }
+}

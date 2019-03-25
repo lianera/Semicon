@@ -1,0 +1,28 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "semicon:led"
+  },
+  "variants": {
+    "state": {
+      "true": {
+        "textures": {
+          "all": "semicon:blocks/led",
+          "particle": "semicon:blocks/led"
+        }
+      },
+      "false": {
+        "textures": {
+          "all": "semicon:blocks/led_on",
+          "particle": "semicon:blocks/led_on"
+        }
+      }
+    },
+    "facing": {
+      "north": {"y": 0},
+      "east": {"y": 90},
+      "south": {"y": 180},
+      "west": {"y": 270}
+    }
+  }
+}

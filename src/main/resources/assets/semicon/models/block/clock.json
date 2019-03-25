@@ -1,0 +1,13 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "semicon:blocks/gate_blank",
+    "up": "semicon:blocks/clock",
+    "north": "semicon:blocks/y_port",
+    "east": "semicon:blocks/gate_blank",
+    "south": "semicon:blocks/off",
+    "west": "semicon:blocks/gate_blank",
+    "particle": "semicon:blocks/clock"
+  }
+
+}
