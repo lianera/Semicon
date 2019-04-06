@@ -19,8 +19,7 @@ public abstract class BlockGate extends BlockOriented {
         super(Material.IRON);
     }
 
-    abstract protected Gate createGate(World world, BlockPos pos, EnumFacing facing,
-                                       List<EnumFacing> input_faces, List<EnumFacing> output_faces);
+    abstract protected Gate createGate(List<EnumFacing> input_faces, List<EnumFacing> output_faces);
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
@@ -28,7 +27,7 @@ public abstract class BlockGate extends BlockOriented {
         List input_faces = new ArrayList<EnumFacing>();
         List output_faces = new ArrayList<EnumFacing>();
 
-        Gate gate = createGate(worldIn, pos, block_facing, input_faces, output_faces);
+        Gate gate = createGate(input_faces, output_faces);
 
         EnumFacing[] input_face_arr = new EnumFacing[input_faces.size()];
         for(int i = 0; i < input_faces.size(); i++){

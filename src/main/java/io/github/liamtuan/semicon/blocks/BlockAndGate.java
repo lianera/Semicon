@@ -17,13 +17,13 @@ public class BlockAndGate extends BlockGate {
     }
 
     @Override
-    protected Gate createGate(World world, BlockPos pos, EnumFacing facing, List<EnumFacing> input_faces, List<EnumFacing> output_faces) {
+    protected Gate createGate(List<EnumFacing> input_faces, List<EnumFacing> output_faces) {
         Node y = new Node();
         Node a = new Node();
         Node b = new Node();
-        output_faces.add(facing);
-        input_faces.add(facing.getOpposite());
-        input_faces.add(facing.rotateY());
+        output_faces.add(EnumFacing.NORTH);
+        input_faces.add(EnumFacing.SOUTH);
+        input_faces.add(EnumFacing.EAST);
         return new AndGate(a, b, y);
     }
 

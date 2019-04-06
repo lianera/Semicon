@@ -59,25 +59,25 @@ public class Circuit {
 
     static Map<Joint, Node> nodes = new HashMap<>();
     static Map<Node, List<Joint>> nodejoints = new HashMap<>();
-    static List<Gate> gates = new ArrayList<>();
-    static List<Node> events = new ArrayList<>();
-    static Map<Node, List<Joint>> output_table = new HashMap<>();
     static NodeStateListener nodeStateListener = null;
 
     public static void init(){
         nodeStateListener = new NodeStateListener() {
             @Override
             public void onNodeStateChanged(Node node) {
-                List<Joint> nodejoints = output_table.get(node);
-                for(Joint joint : nodejoints){
-                    BlockIO block = (BlockIO) joint.getBlock();
-                    block.setState(joint.world, joint.pos, node.getState());
+                List<Joint> joints = nodejoints.get(node);
+                for(Joint joint : joints){
+                    Block block = joint.getBlock();
+                    if(block instanceof  BlockIO){
+                        BlockIO blockio = (BlockIO) joint.getBlock();
+                        blockio.setState(joint.world, joint.pos, node.getState());
+                    }
                 }
             }
         };
     }
 
-    public static void procEvents(){
+    public static void procEvents(List<Node> events){
         Processor p = new Processor();
         Node[] nodearr = new Node[events.size()];
         events.toArray(nodearr);
@@ -90,33 +90,40 @@ public class Circuit {
         addJoint(joint, new Node());
     }
 
-    public static void addOutput(World world, BlockPos pos, EnumFacing facing){
-        Joint joint = new Joint(world, pos, facing);
+    public static void addOutput(World world, BlockPos pos, EnumFacing[] faces){
         Node node = new Node();
-        node = addJoint(joint, node);
-        node.addListener(nodeStateListener);
-        List<Joint> nodejoints = output_table.get(node);
-        if(nodejoints == null){
-            nodejoints = new ArrayList<>();
-            output_table.put(node, nodejoints);
+        for(EnumFacing facing : faces){
+            Joint joint = new Joint(world, pos, facing);
+            node = addJoint(joint, node);
         }
-        nodejoints.add(joint);
+
+        node.addListener(nodeStateListener);
+        node.invokeListener();
     }
 
     public static void setState(World world, BlockPos pos, EnumFacing facing, boolean state){
         Joint joint = new Joint(world, pos, facing);
         Node node = nodes.get(joint);
         node.setState(state);
+
+        List<Node> events = new ArrayList<>();
+        events.add(node);
+        procEvents(events);
     }
 
     public static void addBlockGate(World world, BlockPos pos, Gate gate,
                                     EnumFacing[] input_faces, EnumFacing[] output_faces){
+        List<Node> events = new ArrayList<>();
+
         Node[] gate_input_nodes = gate.getInputNodes();
         for(int i = 0; i < input_faces.length; i++){
             Node node = gate_input_nodes[i];
             Joint joint = new Joint(world, pos, input_faces[i]);
             addJoint(joint, node);
+
+            events.add(node);
         }
+
         Node[] gate_output_nodes = gate.getOutputNodes();
         for(int i = 0; i < output_faces.length; i++){
             Node node = gate_output_nodes[i];
@@ -124,7 +131,7 @@ public class Circuit {
             addJoint(joint, node);
         }
 
-        gates.add(gate);
+        procEvents(events);
     }
 
     public static void addBlockWire(World world, BlockPos pos, EnumFacing[] joint_faces){
@@ -139,6 +146,7 @@ public class Circuit {
     private static Node addJoint(Joint joint, Node node){
         Joint linkedjoint = joint.linkedJoint();
         Node linkednode = nodes.get(linkedjoint);
+        List<Node> events = new ArrayList<>();
 
         if(linkednode != null){ // merge
             linkednode.merge(node);
@@ -164,6 +172,9 @@ public class Circuit {
         }
         joints.add(joint);
         nodes.put(joint, node);
+
+        procEvents(events);
         return node;
     }
+
 }

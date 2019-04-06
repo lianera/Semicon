@@ -41,6 +41,11 @@ public class Node{
         listeners.add(listener);
     }
 
+    public void invokeListener(){
+        for(NodeStateListener listener : listeners)
+            listener.onNodeStateChanged(this);
+    }
+
     @Override
     public String toString() {
         return state?"1":"0";

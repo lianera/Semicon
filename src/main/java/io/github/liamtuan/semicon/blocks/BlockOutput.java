@@ -19,9 +19,9 @@ public abstract class BlockOutput extends BlockIO{
         EnumFacing block_facing = state.getValue(PROPERTYFACING);
         EnumFacing[] jointfaces = getConnectedFaces();
         for(int i = 0; i < jointfaces.length; i++){
-            EnumFacing realFacing = getWorldFacing(block_facing, jointfaces[i]);
-            Circuit.addOutput(worldIn, pos, realFacing);
+            jointfaces[i] = getWorldFacing(block_facing, jointfaces[i]);
         }
+        Circuit.addOutput(worldIn, pos, jointfaces);
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
 }
