@@ -5,13 +5,13 @@
   },
   "variants": {
     "state": {
-      "true": {
+      "false": {
         "textures": {
           "all": "semicon:blocks/led",
           "particle": "semicon:blocks/led"
         }
       },
-      "false": {
+      "true": {
         "textures": {
           "all": "semicon:blocks/led_on",
           "particle": "semicon:blocks/led_on"

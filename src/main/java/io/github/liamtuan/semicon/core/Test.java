@@ -14,6 +14,8 @@ public class Test {
         oscillationTest();
         if(!srTest())
             System.out.println("sr latch test failed");
+        if(!MergeTest())
+            System.out.println("node merge test failed");
     }
 
     boolean gateTest(){
@@ -181,6 +183,44 @@ public class Test {
         S.setState(false);
         events = new Node[]{S};
         p.eval(events);
+
+        return true;
+    }
+
+    boolean MergeTest(){
+        Node A = new Node();
+        Node B = new Node();
+        Node C = new Node();
+        Node D = new Node();
+        Gate not = new NotGate(A, B);
+        Gate and = new AndGate(B, C, D);
+        Node[] nodes = new Node[]{A, B, C, D};
+        Node[] events = nodes;
+        C.setState(true);
+        Processor p = new Processor();
+        p.eval(events);
+        int[] expect = new int[]{0, 1, 1, 1};
+        if(!compareStates(nodes, expect))
+            return false;
+
+        Node E = new Node();
+        Node F = new Node();
+        Node G = new Node();
+        Gate or = new OrGate(E, F, G);
+        nodes = new Node[]{E, F, G};
+        events = nodes;
+        p.eval(events);
+        expect = new int[]{0, 0, 0};
+        if(!compareStates(nodes, expect))
+            return false;
+
+        B.merge(E);
+        events = new Node[]{B};
+        p.eval(events);
+        nodes = new Node[]{A, B, C, D, F, G};
+        expect = new int[]{0, 1, 1, 1, 0, 1};
+        if(!compareStates(nodes, expect))
+            return false;
 
         return true;
     }

@@ -5,8 +5,13 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
-public class BlockIO extends BlockOriented{
+public abstract class BlockIO extends BlockOriented{
     public static final PropertyBool PROPERTYSTATE = PropertyBool.create("state");
 
     BlockIO() {
@@ -19,14 +24,18 @@ public class BlockIO extends BlockOriented{
         return container;
     }
 
+    public void setState(World worldIn, BlockPos pos, boolean on_off_state){
+        IBlockState blockState = worldIn.getBlockState(pos);
+        blockState = blockState.withProperty(PROPERTYSTATE, on_off_state);
+        worldIn.setBlockState(pos, blockState);
+    }
 
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
         IBlockState blockState = super.getStateFromMeta(meta);
         boolean on_off_state = (meta & 0x4) != 0;
-        blockState.withProperty(PROPERTYSTATE, on_off_state);
-        return blockState;
+        return blockState.withProperty(PROPERTYSTATE, on_off_state);
     }
 
     @Override
@@ -35,9 +44,30 @@ public class BlockIO extends BlockOriented{
         int meta = super.getMetaFromState(state);
         boolean on_off_state = state.getValue(PROPERTYSTATE);
         if(on_off_state)
-            meta = meta & ~0x4;
-        else
             meta = meta | 0x4;
+        else
+            meta = meta & ~0x4;
         return meta;
     }
+
+
+    @Override
+    public IBlockState getStateForPlacement(World world,
+                                            BlockPos pos,
+                                            EnumFacing facing,
+                                            float hitX,
+                                            float hitY,
+                                            float hitZ,
+                                            int meta,
+                                            EntityLivingBase placer,
+                                            EnumHand hand)
+    {
+        IBlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand);
+        state = state.withProperty(PROPERTYSTATE, false);
+        return state;
+    }
+
+
+    abstract EnumFacing[] getConnectedFaces();
+
 }

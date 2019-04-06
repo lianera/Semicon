@@ -11,17 +11,27 @@ public class NotGate extends Gate{
     }
 
     @Override
-    Node[] getInputNodes() {
+    public Node[] getInputNodes() {
         return new Node[]{x};
     }
 
     @Override
-    Node[] getOutputNodes() {
+    public Node[] getOutputNodes() {
         return new Node[]{y};
     }
 
     @Override
+    public void setInputNodes(Node[] nodes) {
+        x = nodes[0];
+    }
+
+    @Override
+    public void setOutputNodes(Node[] nodes) {
+        y = nodes[0];
+    }
+
+    @Override
     void evel() {
-        y.state = !x.state;
+        y.setState(!x.getState());
     }
 }

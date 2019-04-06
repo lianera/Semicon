@@ -1,8 +1,15 @@
 package io.github.liamtuan.semicon.blocks;
 
-public class BlockClock extends BlockIO {
+import net.minecraft.util.EnumFacing;
+
+public class BlockClock extends BlockInput {
     public BlockClock() {
         setRegistryName("clock");
         setUnlocalizedName("clock");
+    }
+
+    @Override
+    EnumFacing[] getConnectedFaces() {
+        return new EnumFacing[]{EnumFacing.NORTH};
     }
 }

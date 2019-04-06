@@ -18,6 +18,7 @@ public class App {
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
+        Circuit.init();
     }
 
     @EventHandler

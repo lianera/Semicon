@@ -2,8 +2,10 @@ package io.github.liamtuan.semicon.core;
 
 
 public abstract class Gate{
-    abstract Node[] getInputNodes();
-    abstract Node[] getOutputNodes();
+    public abstract Node[] getInputNodes();
+    public abstract Node[] getOutputNodes();
+    public abstract void setInputNodes(Node[] nodes);
+    public abstract void setOutputNodes(Node[] nodes);
     abstract void evel();
     void attach()
     {
@@ -38,13 +40,25 @@ abstract class X2Y1Gate extends Gate{
     }
 
     @Override
-    Node[] getInputNodes() {
+    public Node[] getInputNodes() {
         return new Node[]{x1, x2};
     }
 
     @Override
-    Node[] getOutputNodes() {
+    public Node[] getOutputNodes() {
         return new Node[]{y};
     }
+
+    @Override
+    public void setInputNodes(Node[] nodes){
+        x1 = nodes[0];
+        x2 = nodes[1];
+    }
+
+    @Override
+    public void setOutputNodes(Node[] nodes){
+        y = nodes[0];
+    }
+
 }
 

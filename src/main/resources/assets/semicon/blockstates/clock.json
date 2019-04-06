@@ -5,7 +5,7 @@
   },
   "variants": {
     "state": {
-      "true": {
+      "false": {
         "textures": {
           "down": "semicon:blocks/gate_blank",
           "up": "semicon:blocks/clock",
@@ -16,7 +16,7 @@
           "particle": "semicon:blocks/clock"
         }
       },
-      "false": {
+      "true": {
         "textures": {
           "down": "semicon:blocks/blank_on",
           "up": "semicon:blocks/clock_on",

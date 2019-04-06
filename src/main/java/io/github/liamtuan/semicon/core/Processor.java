@@ -52,7 +52,7 @@ public class Processor {
             gate.evel();
             Node[] outs = gate.getOutputNodes();
             for(int i = 0; i < outs.length; i++){
-                if(outs[i].state != oldstates[i])
+                if(outs[i].getState() != oldstates[i])
                     event_queue.add(outs[i]);
             }
         }
@@ -63,7 +63,7 @@ public class Processor {
         Node[] outs = gate.getOutputNodes();
         boolean[] oldstates = new boolean[outs.length];
         for(int i = 0; i < outs.length; i++)
-            oldstates[i] = outs[i].state;
+            oldstates[i] = outs[i].getState();
         return oldstates;
     }
 }

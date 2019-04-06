@@ -9,6 +9,6 @@ public class AndGate extends X2Y1Gate{
     }
     @Override
     void evel() {
-        y.state = x1.state && x2.state;
+        y.setState(x1.getState() && x2.getState());
     }
 }
