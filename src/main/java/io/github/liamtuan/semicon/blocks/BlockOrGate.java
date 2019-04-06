@@ -16,14 +16,20 @@ public class BlockOrGate extends BlockGate {
     }
 
     @Override
-    protected Gate createGate(List<EnumFacing> input_faces, List<EnumFacing> output_faces) {
+    protected EnumFacing[] localIntpuFaces() {
+        return new EnumFacing[]{EnumFacing.SOUTH, EnumFacing.EAST};
+    }
+
+    @Override
+    protected EnumFacing[] localOutputFaces() {
+        return new EnumFacing[]{EnumFacing.NORTH};
+    }
+
+    @Override
+    protected Gate createGate() {
         Node y = new Node();
         Node a = new Node();
         Node b = new Node();
-        output_faces.add(EnumFacing.NORTH);
-        input_faces.add(EnumFacing.SOUTH);
-        input_faces.add(EnumFacing.EAST);
-
         return new OrGate(a, b, y);
     }
 

@@ -1,5 +1,6 @@
 package io.github.liamtuan.semicon;
 
+import io.github.liamtuan.semicon.sim.Circuit;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;

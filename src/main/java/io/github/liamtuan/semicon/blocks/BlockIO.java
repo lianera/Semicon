@@ -70,4 +70,12 @@ public abstract class BlockIO extends BlockOriented{
 
     abstract EnumFacing[] getConnectedFaces();
 
+
+    public EnumFacing[] getJointFaces(EnumFacing block_facing){
+        EnumFacing[] faces = getConnectedFaces();
+        for(int i = 0; i < faces.length; i++){
+            faces[i] = getWorldFacing(block_facing, faces[i]);
+        }
+        return faces;
+    }
 }

@@ -59,6 +59,12 @@ public class BlockOriented extends Block {
         return facingbits;
     }
 
+    public EnumFacing getBlockFacing(World world, BlockPos pos){
+        IBlockState state = world.getBlockState(pos);
+        EnumFacing block_facing = state.getValue(PROPERTYFACING);
+        return block_facing;
+    }
+
     public EnumFacing getWorldFacing(EnumFacing block_facing, EnumFacing facing){
         EnumFacing world_facing = facing;
         if(facing != EnumFacing.UP && facing != EnumFacing.DOWN){

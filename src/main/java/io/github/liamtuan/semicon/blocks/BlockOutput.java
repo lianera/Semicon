@@ -1,16 +1,12 @@
 package io.github.liamtuan.semicon.blocks;
 
-import io.github.liamtuan.semicon.Circuit;
-import io.github.liamtuan.semicon.core.Gate;
+import io.github.liamtuan.semicon.sim.Circuit;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class BlockOutput extends BlockIO{
 

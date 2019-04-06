@@ -1,6 +1,6 @@
 package io.github.liamtuan.semicon.blocks;
 
-import io.github.liamtuan.semicon.Circuit;
+import io.github.liamtuan.semicon.sim.Circuit;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;

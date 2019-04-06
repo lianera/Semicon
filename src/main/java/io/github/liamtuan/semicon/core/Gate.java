@@ -26,6 +26,29 @@ public abstract class Gate{
             node.ingates.remove(this);
         }
     }
+
+    public void replaceNode(Node oldnode, Node newnode){
+        Node[] inputs = getInputNodes();
+        for(int i = 0; i < inputs.length; i++){
+            Node node = inputs[i];
+            if(node == oldnode){
+                node.outgates.remove(this);
+                newnode.outgates.add(this);
+                inputs[i] = newnode;
+            }
+        }
+        setInputNodes(inputs);
+        Node[] outputs = getOutputNodes();
+        for(int i = 0; i < outputs.length; i++){
+            Node node = outputs[i];
+            if(node == oldnode){
+                node.ingates.remove(this);
+                newnode.ingates.add(this);
+                outputs[i] = newnode;
+            }
+        }
+        setOutputNodes(outputs);
+    }
 }
 
 abstract class X2Y1Gate extends Gate{

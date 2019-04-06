@@ -16,11 +16,19 @@ public class BlockNotGate extends BlockGate {
     }
 
     @Override
-    protected Gate createGate(List<EnumFacing> input_faces, List<EnumFacing> output_faces) {
+    protected EnumFacing[] localIntpuFaces() {
+        return new EnumFacing[]{EnumFacing.SOUTH};
+    }
+
+    @Override
+    protected EnumFacing[] localOutputFaces() {
+        return new EnumFacing[]{EnumFacing.NORTH};
+    }
+
+    @Override
+    protected Gate createGate() {
         Node y = new Node();
         Node a = new Node();
-        output_faces.add(EnumFacing.NORTH);
-        input_faces.add(EnumFacing.SOUTH);
         return new NotGate(a, y);
     }
 

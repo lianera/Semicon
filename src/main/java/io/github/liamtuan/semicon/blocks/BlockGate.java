@@ -1,6 +1,6 @@
 package io.github.liamtuan.semicon.blocks;
 
-import io.github.liamtuan.semicon.Circuit;
+import io.github.liamtuan.semicon.sim.Circuit;
 import io.github.liamtuan.semicon.core.Gate;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -10,36 +10,49 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class BlockGate extends BlockOriented {
 
     BlockGate() {
         super(Material.IRON);
     }
 
-    abstract protected Gate createGate(List<EnumFacing> input_faces, List<EnumFacing> output_faces);
+    abstract protected EnumFacing[] localIntpuFaces();
+    abstract protected EnumFacing[] localOutputFaces();
+    abstract protected Gate createGate();
+
+    public EnumFacing[] getInputs(EnumFacing block_facing){
+        EnumFacing[] input_faces = localIntpuFaces();
+        for(int i = 0; i < input_faces.length; i++){
+            input_faces[i] = getWorldFacing(block_facing, input_faces[i]);
+        }
+        return input_faces;
+    }
+
+    public EnumFacing[] getOutputs(EnumFacing block_facing){
+        EnumFacing[] output_faces = localOutputFaces();
+        for(int i = 0; i < output_faces.length; i++){
+            output_faces[i] = getWorldFacing(block_facing, output_faces[i]);
+        }
+        return output_faces;
+    }
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         EnumFacing block_facing = state.getValue(PROPERTYFACING);
-        List input_faces = new ArrayList<EnumFacing>();
-        List output_faces = new ArrayList<EnumFacing>();
 
-        Gate gate = createGate(input_faces, output_faces);
+        Gate gate = createGate();
 
-        EnumFacing[] input_face_arr = new EnumFacing[input_faces.size()];
-        for(int i = 0; i < input_faces.size(); i++){
-            input_face_arr[i] = getWorldFacing(block_facing, (EnumFacing)input_faces.get(i));
-        }
-        EnumFacing[] output_face_arr = new EnumFacing[output_faces.size()];
-        for(int i = 0; i < output_faces.size(); i++){
-            output_face_arr[i] = getWorldFacing(block_facing, (EnumFacing)output_faces.get(i));
-        }
-
-        Circuit.addBlockGate(worldIn, pos, gate, input_face_arr, output_face_arr);
+        EnumFacing[] input_faces = getInputs(block_facing);
+        EnumFacing[] output_faces = getOutputs(block_facing);
+        Circuit.addBlockGate(worldIn, pos, gate, input_faces, output_faces);
 
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
+
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        Circuit.removeBlockGate(worldIn, pos);
+        super.breakBlock(worldIn, pos, state);
+    }
+
 }
