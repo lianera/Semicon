@@ -11,14 +11,25 @@ import net.minecraft.world.World;
 public abstract class BlockInput extends BlockIO{
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+        super.onBlockAdded(worldIn, pos, state);
+
         EnumFacing block_facing = state.getValue(PROPERTYFACING);
         EnumFacing[] jointfaces = getConnectedFaces();
         for(int i = 0; i < jointfaces.length; i++){
             EnumFacing realFacing = getWorldFacing(block_facing, jointfaces[i]);
-            Circuit.addInput(worldIn, pos, realFacing);
+            Circuit.addInput(pos, realFacing);
         }
 
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
+
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        EnumFacing block_facing = state.getValue(PROPERTYFACING);
+        EnumFacing[] faces = getJointFaces(block_facing);
+
+        Circuit.removeInput(pos, faces);
+        super.breakBlock(worldIn, pos, state);
+    }
+
 }

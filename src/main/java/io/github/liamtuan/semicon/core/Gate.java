@@ -7,6 +7,19 @@ public abstract class Gate{
     public abstract void setInputNodes(Node[] nodes);
     public abstract void setOutputNodes(Node[] nodes);
     abstract void evel();
+
+    private static int ID_ = 0;
+    private int id;
+
+    public Gate(){
+        id = ID_;
+        ID_ ++;
+    }
+
+    public int getId(){
+        return id;
+    }
+
     void attach()
     {
         for(Node node : getInputNodes()){

@@ -1,11 +1,7 @@
 package io.github.liamtuan.semicon.core;
 
-public class Test {
+public class CoreTest {
 
-    public static void main(String[] args) {
-        Test t = new Test();
-        t.testAll();
-    }
     public void testAll(){
         if(!gateTest())
             System.out.println("gate test failed");

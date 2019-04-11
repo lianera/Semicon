@@ -11,4 +11,9 @@ public class AndGate extends X2Y1Gate{
     void evel() {
         y.setState(x1.getState() && x2.getState());
     }
+
+    @Override
+    public String toString() {
+        return "AndGate" + getId();
+    }
 }

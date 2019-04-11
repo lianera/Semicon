@@ -6,12 +6,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class Joint{
-    World world;
     BlockPos pos;
     EnumFacing facing;
 
-    Joint(World world, BlockPos pos, EnumFacing facing){
-        this.world = world;
+    Joint(BlockPos pos, EnumFacing facing){
         this.pos = pos;
         this.facing = facing;
     }
@@ -19,38 +17,30 @@ public class Joint{
     Joint linkedJoint(){
         BlockPos linkedpos = pos.offset(facing);
         EnumFacing linkedfacing = facing.getOpposite();
-        return new Joint(world, linkedpos, linkedfacing);
+        return new Joint(linkedpos, linkedfacing);
     }
 
     boolean isLinked(Joint j){
         return this.linkedJoint().equals(j);
     }
 
-    Block getBlock(){
+    Block getBlock(World world){
         return world.getBlockState(pos).getBlock();
     }
 
     @Override
     public boolean equals(Object obj) {
-        Joint jointobj = (Joint)obj;
-        return jointobj.world == world &&
-                jointobj.pos.getX() == pos.getX() &&
-                jointobj.pos.getY() == pos.getY() &&
-                jointobj.pos.getZ() == pos.getZ() &&
-                jointobj.facing == facing;
-    }
-
-    public Cell getCell(){
-        return new Cell(world, pos);
+        Joint jobj = (Joint)obj;
+        return jobj.pos.equals(pos) && jobj.facing == facing;
     }
 
     @Override
     public int hashCode() {
-        return
-                pos.getX()*320000000 +
-                        pos.getY()*320000 +
-                        pos.getZ()*320 +
-                        facing.hashCode()*5 +
-                        world.hashCode();
+        return pos.hashCode()*6 + facing.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return pos.toString() + " " + facing.toString();
     }
 }

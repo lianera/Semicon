@@ -6,21 +6,29 @@ public class Node{
     private boolean state;
     Set<Gate> ingates;
     Set<Gate> outgates;
+    private int id;
+    private static int ID_ = 0;
 
-    List<NodeStateListener> listeners;
+    Set<NodeStateListener> listeners;
 
     public Node()
     {
         this.state = false;
         ingates = new HashSet<Gate>();
         outgates = new HashSet<Gate>();
-        listeners = new ArrayList<>();
+        listeners = new HashSet<>();
+        id = ID_;
+        ID_ ++;
     }
 
     public Node(boolean state){
         this.state = state;
         ingates = new HashSet<Gate>();
         outgates = new HashSet<Gate>();
+    }
+
+    public int getId(){
+        return id;
     }
 
     public boolean getState(){
@@ -48,7 +56,7 @@ public class Node{
 
     @Override
     public String toString() {
-        return state?"1":"0";
+        return "Node" + getId();
     }
 
     public void merge(Node node){
@@ -75,5 +83,7 @@ public class Node{
         ingates.addAll(node.ingates);
         outgates.addAll(node.outgates);
         listeners.addAll(node.listeners);
+        if(node.state)
+            this.state = true;
     }
 }

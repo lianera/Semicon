@@ -34,4 +34,9 @@ public class NotGate extends Gate{
     void evel() {
         y.setState(!x.getState());
     }
+
+    @Override
+    public String toString() {
+        return "NotGate" + getId();
+    }
 }

@@ -37,21 +37,26 @@ public abstract class BlockGate extends BlockOriented {
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+        super.onBlockAdded(worldIn, pos, state);
+
         EnumFacing block_facing = state.getValue(PROPERTYFACING);
 
         Gate gate = createGate();
 
         EnumFacing[] input_faces = getInputs(block_facing);
         EnumFacing[] output_faces = getOutputs(block_facing);
-        Circuit.addBlockGate(worldIn, pos, gate, input_faces, output_faces);
+        Circuit.addBlockGate(pos, gate, input_faces, output_faces);
 
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        Circuit.removeBlockGate(worldIn, pos);
+        EnumFacing block_facing = state.getValue(PROPERTYFACING);
+        EnumFacing[] input_faces = getInputs(block_facing);
+        EnumFacing[] output_faces = getOutputs(block_facing);
+
+        Circuit.removeBlockGate(pos, input_faces, output_faces);
         super.breakBlock(worldIn, pos, state);
     }
 

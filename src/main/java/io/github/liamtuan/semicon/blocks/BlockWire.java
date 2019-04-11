@@ -48,10 +48,22 @@ public abstract class BlockWire extends BlockOriented {
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+        super.onBlockAdded(worldIn, pos, state);
+
         EnumFacing block_facing = state.getValue(PROPERTYFACING);
         EnumFacing[] jointfaces = getJointFaces(block_facing);
-        Circuit.addBlockWire(worldIn, pos, jointfaces);
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+        Circuit.addBlockWire(pos, jointfaces);
+
     }
+
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        EnumFacing block_facing = state.getValue(PROPERTYFACING);
+        EnumFacing[] faces = getJointFaces(block_facing);
+
+        Circuit.removeBlockWire(pos, faces);
+        super.breakBlock(worldIn, pos, state);
+    }
+
 }

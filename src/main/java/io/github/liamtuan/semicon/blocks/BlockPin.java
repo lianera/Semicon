@@ -35,7 +35,7 @@ public class BlockPin extends BlockInput {
             state = state.withProperty(PROPERTYSTATE, onoff_state);
             worldIn.setBlockState(pos, state);
 
-            Circuit.setState(worldIn, pos, blockfacing, onoff_state);
+            Circuit.setInputState(pos, blockfacing, onoff_state);
             return true;
         }
         return false;

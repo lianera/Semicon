@@ -26,8 +26,11 @@ public abstract class BlockIO extends BlockOriented{
 
     public void setState(World worldIn, BlockPos pos, boolean on_off_state){
         IBlockState blockState = worldIn.getBlockState(pos);
-        blockState = blockState.withProperty(PROPERTYSTATE, on_off_state);
-        worldIn.setBlockState(pos, blockState);
+        boolean oldstate = blockState.getValue(PROPERTYSTATE);
+        if(on_off_state != oldstate){
+            blockState = blockState.withProperty(PROPERTYSTATE, on_off_state);
+            worldIn.setBlockState(pos, blockState);
+        }
     }
 
     @Override
