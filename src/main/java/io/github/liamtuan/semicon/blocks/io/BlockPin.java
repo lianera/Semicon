@@ -1,4 +1,4 @@
-package io.github.liamtuan.semicon.blocks;
+package io.github.liamtuan.semicon.blocks.io;
 
 import io.github.liamtuan.semicon.sim.Circuit;
 import net.minecraft.block.state.IBlockState;
@@ -29,7 +29,7 @@ public class BlockPin extends BlockInput {
                                     float hitX, float hitY, float hitZ) {
         EnumFacing blockfacing = state.getValue(PROPERTYFACING);
         EnumFacing handonface = getLocalFacing(blockfacing, facing);
-        if(handonface != EnumFacing.NORTH) {
+        if(handonface != EnumFacing.NORTH && !worldIn.isRemote) {
             boolean onoff_state = state.getValue(PROPERTYSTATE);
             onoff_state = !onoff_state;
             state = state.withProperty(PROPERTYSTATE, onoff_state);

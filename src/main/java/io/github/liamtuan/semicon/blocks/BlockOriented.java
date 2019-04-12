@@ -17,7 +17,7 @@ public class BlockOriented extends Block {
 
     public static final PropertyDirection PROPERTYFACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
-    BlockOriented(Material material) {
+    public BlockOriented(Material material) {
         super(material);
     }
 

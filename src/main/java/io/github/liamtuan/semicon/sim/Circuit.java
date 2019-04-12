@@ -1,13 +1,11 @@
 package io.github.liamtuan.semicon.sim;
 
-import com.sun.jna.platform.win32.WinDef;
-import io.github.liamtuan.semicon.blocks.BlockOutput;
+import io.github.liamtuan.semicon.blocks.io.BlockOutput;
 import io.github.liamtuan.semicon.core.*;
 import net.minecraft.block.Block;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.lwjgl.Sys;
 
 import java.util.*;
 

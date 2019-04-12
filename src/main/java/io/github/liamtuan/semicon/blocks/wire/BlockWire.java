@@ -1,5 +1,6 @@
-package io.github.liamtuan.semicon.blocks;
+package io.github.liamtuan.semicon.blocks.wire;
 
+import io.github.liamtuan.semicon.blocks.BlockOriented;
 import io.github.liamtuan.semicon.sim.Circuit;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

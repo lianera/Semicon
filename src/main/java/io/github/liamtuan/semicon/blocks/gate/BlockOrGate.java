@@ -1,19 +1,14 @@
-package io.github.liamtuan.semicon.blocks;
+package io.github.liamtuan.semicon.blocks.gate;
 
-import io.github.liamtuan.semicon.core.AndGate;
 import io.github.liamtuan.semicon.core.Gate;
 import io.github.liamtuan.semicon.core.Node;
+import io.github.liamtuan.semicon.core.OrGate;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
-import java.util.List;
-
-public class BlockAndGate extends BlockGate {
-    public BlockAndGate() {
-        setRegistryName("andgate");
-        setUnlocalizedName("andgate");
-
+public class BlockOrGate extends BlockGate {
+    public BlockOrGate() {
+        setRegistryName("orgate");
+        setUnlocalizedName("orgate");
     }
 
     @Override
@@ -31,6 +26,7 @@ public class BlockAndGate extends BlockGate {
         Node y = new Node();
         Node a = new Node();
         Node b = new Node();
-        return new AndGate(a, b, y);
+        return new OrGate(a, b, y);
     }
+
 }

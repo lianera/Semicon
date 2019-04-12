@@ -1,21 +1,10 @@
 package io.github.liamtuan.semicon.sim;
 
-import io.github.liamtuan.semicon.blocks.BlockOutput;
 import io.github.liamtuan.semicon.core.AndGate;
 import io.github.liamtuan.semicon.core.Gate;
 import io.github.liamtuan.semicon.core.Node;
-import io.github.liamtuan.semicon.core.NodeStateListener;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.init.Bootstrap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.*;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.storage.ISaveHandler;
-import net.minecraft.world.storage.SaveHandler;
-import org.lwjgl.Sys;
-
-import javax.swing.plaf.ComponentUI;
 
 public class SimTest {
     public SimTest(){
@@ -31,6 +20,8 @@ public class SimTest {
         if(!gateTest())
             System.out.println("gate test failed");
         if(!wireLoopTest())
+            System.out.println("wire loop test failed");
+        if(!gateLoopTest())
             System.out.println("gate loop test failed");
     }
 
@@ -144,6 +135,33 @@ public class SimTest {
 
         Circuit.removeBlockGate(gatepos, infaces, outfaces);
         if(Circuit.getState(led))
+            return false;
+
+        return true;
+    }
+
+    private boolean gateLoopTest(){
+        Circuit.init();
+        //Circuit.setVerbose(true);
+        BlockPos led = new BlockPos(0, 0, 4);
+        Circuit.addOutput(led, EnumFacing.values());
+        EnumFacing[] faces = {EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH, EnumFacing.WEST};
+        Circuit.addBlockWire(new BlockPos(0, 0, 1), faces);
+        Circuit.addBlockWire(new BlockPos(1, 0, 1), faces);
+        Circuit.addBlockWire(new BlockPos(1, 0, 2), faces);
+        Circuit.addBlockWire(new BlockPos(1, 0, 3), faces);
+        Circuit.addBlockWire(new BlockPos(0, 0, 3), faces);
+
+        Circuit.removeBlockWire(new BlockPos(1, 0, 2), faces);
+
+        BlockPos in = new BlockPos(0,0,0);
+        Circuit.addInput(in, EnumFacing.SOUTH);
+
+        if(!Circuit.getState(led))
+            return false;
+
+        Circuit.setInputState(in, EnumFacing.SOUTH, true);
+        if(!Circuit.getState(led))
             return false;
 
         return true;

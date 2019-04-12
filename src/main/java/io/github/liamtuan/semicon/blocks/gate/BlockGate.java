@@ -1,5 +1,6 @@
-package io.github.liamtuan.semicon.blocks;
+package io.github.liamtuan.semicon.blocks.gate;
 
+import io.github.liamtuan.semicon.blocks.BlockOriented;
 import io.github.liamtuan.semicon.sim.Circuit;
 import io.github.liamtuan.semicon.core.Gate;
 import net.minecraft.block.material.Material;

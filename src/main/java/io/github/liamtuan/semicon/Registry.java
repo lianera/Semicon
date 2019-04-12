@@ -1,6 +1,12 @@
 package io.github.liamtuan.semicon;
 
-import io.github.liamtuan.semicon.blocks.*;
+import io.github.liamtuan.semicon.blocks.gate.BlockAndGate;
+import io.github.liamtuan.semicon.blocks.gate.BlockNotGate;
+import io.github.liamtuan.semicon.blocks.gate.BlockOrGate;
+import io.github.liamtuan.semicon.blocks.io.BlockClock;
+import io.github.liamtuan.semicon.blocks.io.BlockLed;
+import io.github.liamtuan.semicon.blocks.io.BlockPin;
+import io.github.liamtuan.semicon.blocks.wire.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -21,6 +27,7 @@ public class Registry {
     public static Block wire_corner;
     public static Block wire_t;
     public static Block wire_cross;
+    public static Block wire_full;
     public static Block pin;
     public static Block clock;
     public static Block led;
@@ -33,6 +40,7 @@ public class Registry {
         wire_corner = new BlockWireCorner();
         wire_t = new BlockWireT();
         wire_cross = new BlockWireCross();
+        wire_full = new BlockWireFull();
         pin = new BlockPin();
         clock = new BlockClock();
         led = new BlockLed();
@@ -41,7 +49,7 @@ public class Registry {
     static Block[] allBlocks(){
         return new Block[]{
                 andgate, orgate, notgate,
-                wire_bar, wire_corner, wire_t, wire_cross,
+                wire_bar, wire_corner, wire_t, wire_cross, wire_full,
                 pin, clock, led
         };
     }

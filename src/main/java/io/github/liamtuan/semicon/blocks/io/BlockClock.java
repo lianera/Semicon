@@ -1,5 +1,6 @@
-package io.github.liamtuan.semicon.blocks;
+package io.github.liamtuan.semicon.blocks.io;
 
+import io.github.liamtuan.semicon.blocks.io.BlockInput;
 import net.minecraft.util.EnumFacing;
 
 public class BlockClock extends BlockInput {

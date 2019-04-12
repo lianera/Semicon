@@ -1,5 +1,6 @@
-package io.github.liamtuan.semicon.blocks;
+package io.github.liamtuan.semicon.blocks.io;
 
+import io.github.liamtuan.semicon.blocks.BlockOriented;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -11,7 +12,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public abstract class BlockIO extends BlockOriented{
+public abstract class BlockIO extends BlockOriented {
     public static final PropertyBool PROPERTYSTATE = PropertyBool.create("state");
 
     BlockIO() {

@@ -1,8 +1,8 @@
-package io.github.liamtuan.semicon.blocks;
+package io.github.liamtuan.semicon.blocks.wire;
 
 import net.minecraft.util.EnumFacing;
 
-public class BlockWireCorner extends BlockWire{
+public class BlockWireCorner extends BlockWire {
     public BlockWireCorner(){
         setRegistryName("wirecorner");
         setUnlocalizedName("wirecorner");

@@ -1,8 +1,8 @@
-package io.github.liamtuan.semicon.blocks;
+package io.github.liamtuan.semicon.blocks.wire;
 
 import net.minecraft.util.EnumFacing;
 
-public class BlockWireCross extends BlockWire{
+public class BlockWireCross extends BlockWire {
     public BlockWireCross(){
         setRegistryName("wirecross");
         setUnlocalizedName("wirecross");
