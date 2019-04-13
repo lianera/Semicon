@@ -9,7 +9,7 @@ public class BlockWireT extends BlockWire {
     }
 
     @Override
-    EnumFacing[] getConnectedFaces() {
+    EnumFacing[] getLocalFaces() {
         return new EnumFacing[]{
                 EnumFacing.WEST,
                 EnumFacing.NORTH,

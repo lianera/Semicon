@@ -1,4 +1,4 @@
-package io.github.liamtuan.semicon.core;
+package io.github.liamtuan.semicon.sim.core;
 
 import java.util.*;
 

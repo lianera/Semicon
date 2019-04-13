@@ -1,290 +1,170 @@
 package io.github.liamtuan.semicon.sim;
 
-import io.github.liamtuan.semicon.blocks.io.BlockOutput;
-import io.github.liamtuan.semicon.core.*;
-import net.minecraft.block.Block;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+
+import io.github.liamtuan.semicon.sim.core.Node;
+import io.github.liamtuan.semicon.sim.core.Processor;
+import org.apache.http.impl.conn.Wire;
+import org.lwjgl.Sys;
 
 import java.util.*;
 
 public class Circuit{
+    private static DataTable data;
+    private static int debug_level;
 
-    private static NodeStateListener output_listener;
-    private static Set<BlockPos> changed_outputs;
 
-    private static JointNodeMap joint_node;
-    private static Set<BlockPos> output_cells;
-    private static Map<BlockPos, Boolean> input_blocks;
-    private static Map<BlockPos, Gate> gate_cells;
-    private static boolean verbose;
-    private static World world = null;
+    public static void setDebugLevel(int i){
+        debug_level = i;
+    }
 
     public static void init(){
-        changed_outputs = new HashSet<>();
-        joint_node = new JointNodeMap();
-        output_cells = new HashSet<>();
-        input_blocks = new HashMap<>();
-        gate_cells = new HashMap<>();
-        verbose = false;
+        data = new DataTable();
+        debug_level = 0;
+    }
 
-        output_listener = new NodeStateListener() {
-            @Override
-            public void onNodeStateChanged(Node node) {
-                BlockPos[] outputs = getOutputCells(node);
-                for(BlockPos pos : outputs){
-                    changed_outputs.add(pos);
+    public static void add(Unit unit){
+        if(debug_level >= 1)
+            System.out.println("add " + unit);
+
+        Cell pos = unit.getPos();
+        data.put(pos, unit);
+
+        // check neighbors
+        for(Dir dir : Dir.values()){
+            Node node = unit.getNode(dir);
+            Node neighbor_node = neighborNode(pos, dir);
+            if(node == null || neighbor_node == null || node == neighbor_node)
+                continue;
+
+            if(debug_level >= 2)
+                System.out.println("merge " + node + " to " + neighbor_node);
+            neighbor_node.merge(node);
+            data.replace(node, neighbor_node);
+        }
+    }
+
+    public static void remove(Cell cell){
+        if(debug_level >= 1){
+            System.out.println("remove " + data.get(cell));
+        }
+        Unit unit = data.get(cell);
+        Set<Node> changednodes = unit.getAllNodes();
+        if(unit instanceof UnitWire){
+            changednodes.clear();
+            Set<Node> oldnodes = unit.getAllNodes();
+            for(Dir d : Dir.values()){
+                Set<Joint> linked = findLinkedJoints(cell, d);
+                if(linked == null || linked.isEmpty())
+                    continue;
+                for(Node oldnode : oldnodes) {
+                    Node newnode = new Node();
+                    data.replaceJointsNode(linked, oldnode, newnode);
+                    changednodes.add(newnode);
                 }
             }
-        };
-    }
 
-    public static void setWorld(World world){
-        Circuit.world = world;
-    }
-
-    public static void setVerbose(boolean verbose){
-        Circuit.verbose = verbose;
-    }
-
-    private static BlockPos[] getOutputCells(Node node){
-        Joint[] joints = joint_node.getNodeJoints(node);
-        Set<BlockPos> cells = new HashSet<>();
-        for(Joint joint : joints){
-            if(output_cells.contains(joint.pos))
-                cells.add(joint.pos);
-        }
-        return cells.toArray(new BlockPos[0]);
-    }
-
-    private static Node installJoint(Joint joint, Node node){
-        Joint linkedjoint = joint.linkedJoint();
-        Node linkednode = joint_node.get(linkedjoint);
-        if(linkednode == null || linkednode == node){
-            joint_node.put(joint, node);
-            if(verbose)
-                System.out.println("add " + node + " at " + joint);
-            return node;
-        }else {
-            linkednode.merge(node);
-            joint_node.replaceNode(node, linkednode);
-            joint_node.put(joint, linkednode);
-            if(verbose)
-                System.out.println("merge " + node + " to " + linkednode + " at " + joint);
-            return linkednode;
-        }
-    }
-
-    private static void applyOutputChanges(){
-        for(BlockPos pos : changed_outputs){
-            boolean state = false;
-            for(EnumFacing facing : EnumFacing.values()){
-                Joint joint = new Joint(pos, facing);
-                if(joint_node.get(joint).getState())
-                    state = true;
+            if(debug_level >= 2){
+                String s = "";
+                for(Node node : changednodes)
+                    s += node + ",";
+                System.out.println("break wire and generate {" + s + "}");
             }
-            //System.out.println(cell.pos + ":" + state);
-            if(verbose)
-                System.out.println("apply state " + state + " at " + pos);
-            if(world == null)
+        }
+        unit.dettach();
+        data.remove(cell);
+        updateNodes(changednodes);
+        evaluate(changednodes);
+    }
+
+    public static void setInpuState(Cell cell, boolean state){
+        UnitInput input = (UnitInput)data.get(cell);
+        if(debug_level >= 1)
+            System.out.println("set input state " + input + " to " + state);
+        input.setState(state);
+        Set<Node> changednodes = input.getAllNodes();
+        updateNodes(changednodes);
+        evaluate(changednodes);
+    }
+
+    public static boolean getOutputState(Cell cell){
+        UnitOutput output = (UnitOutput)data.get(cell);
+        if(debug_level >= 1)
+            System.out.println("get input state " + output + " " + output.getState());
+        return output.getState();
+    }
+
+    private static Set<Joint> findLinkedJoints(Cell cell, Dir dir){
+        Set<Joint> results = new HashSet<>();
+        Joint startjoint = new Joint(cell, dir);
+        Stack<Joint> open = new Stack<>();
+        Set<Joint> closed = new HashSet<>();
+        open.add(startjoint);
+        while(!open.isEmpty()){
+            Joint joint = open.pop();
+            results.add(joint);
+            closed.add(joint);
+            Unit unit = data.get(joint.pos);
+            if(!(unit instanceof UnitWire)){
                 continue;
-            Block block = world.getBlockState(pos).getBlock();
-            if(block instanceof BlockOutput){
-                BlockOutput output = (BlockOutput)block;
-                output.setState(world, pos, state);
+            }
+            for(Dir d : Dir.values()){
+                if(d == joint.dir || unit.getNode(d) == null)
+                    continue;
+                Joint j = new Joint(joint.pos, d);
+                if(closed.contains(j))
+                    continue;
+                results.add(j);
+                Joint linked = j.linkedJoint();
+                if(closed.contains(linked))
+                    continue;
+                if(data.get(linked.pos) == null)
+                    continue;
+                open.add(linked);
             }
         }
-        changed_outputs.clear();
+        return results;
+    }
+
+    private static Node neighborNode(Cell pos, Dir dir){
+        Unit unit = data.get(pos);
+        if(unit == null)
+            return null;
+        Node node = unit.getNode(dir);
+        if(node == null)
+            return null;
+        Unit neighbor = data.get(dir.offset(pos));
+        if(neighbor == null)
+            return null;
+        Node neighbor_node = neighbor.getNode(dir.opposite());
+        return neighbor_node;
+    }
+
+    private static void updateNode(Node node){
+        node.setState(false);
+        Set<Cell> cells = data.get(node);
+        if(cells == null)
+            return;
+        for(Cell c : cells){
+            Unit unit = data.get(c);
+            unit.update();
+        }
+    }
+
+    private static void updateNodes(Node[] nodes){
+        for(Node node : nodes)
+            updateNode(node);
+    }
+
+    private static void updateNodes(Set<Node> nodes){
+        updateNodes(nodes.toArray(new Node[0]));
     }
 
     private static void evaluate(Node[] nodes){
-        for(Node node : nodes)
-            node.invokeListener();
-        new Processor().eval(nodes);
-        applyOutputChanges();
+        Processor p = new Processor();
+        p.eval(nodes);
     }
 
-    public static void setInputState(BlockPos pos, EnumFacing facing, boolean state){
-        input_blocks.put(pos, state);
-        Joint joint = new Joint(pos, facing);
-        Node node = joint_node.get(joint);
-        node.setState(state);
-
-        if(verbose)
-            System.out.println("set state " + state + " on " + node + " at " + joint);
-        evaluate(new Node[]{node});
-    }
-
-    public static boolean getState(BlockPos pos, EnumFacing facing){
-        Joint joint = new Joint(pos, facing);
-        Node node = joint_node.get(joint);
-        return node.getState();
-    }
-
-    public static boolean getState(BlockPos pos){
-        for(EnumFacing facing : EnumFacing.values()){
-            Joint joint = new Joint(pos, facing);
-            Node node = joint_node.get(joint);
-            if(node.getState())
-                return true;
-        }
-        return false;
-    }
-
-    public static void addInput(BlockPos pos, EnumFacing facing){
-        Joint joint = new Joint(pos, facing);
-        Node node = installJoint(joint, new Node());
-        input_blocks.put(joint.pos, node.getState());
-        if(verbose)
-            System.out.println("add input " + node + " at " + joint);
-        evaluate(new Node[]{node});
-    }
-
-    public static void removeInput(BlockPos pos, EnumFacing[] faces){
-        Set<Node> nodes = new HashSet<>();
-        for(EnumFacing facing : faces){
-            Joint joint = new Joint(pos, facing);
-            Node node = joint_node.get(joint);
-            node.setState(false);
-            nodes.add(node);
-            joint_node.remove(joint);
-        }
-        if(verbose)
-            System.out.println("remove input at " + pos);
-        input_blocks.remove(pos);
+    private static void evaluate(Set<Node> nodes){
         evaluate(nodes.toArray(new Node[0]));
-    }
-
-    public static void addOutput(BlockPos pos, EnumFacing[] faces){
-        Set<Node> nodes = new HashSet<>();
-        for(EnumFacing facing : faces){
-            Joint joint = new Joint(pos, facing);
-            Node node = installJoint(joint, new Node());
-            node.addListener(output_listener);
-            nodes.add(node);
-        }
-        output_cells.add(pos);
-
-        if(verbose){
-            for(Node node : nodes){
-                System.out.println("add output " + node + " at " + pos);
-            }
-        }
-        evaluate(nodes.toArray(new Node[0]));
-    }
-
-    public static void removeOutput(BlockPos pos, EnumFacing[] faces){
-        for(EnumFacing facing : faces){
-            Joint joint = new Joint(pos, facing);
-            joint_node.remove(joint);
-        }
-        if(verbose)
-            System.out.println("remove output at " + pos);
-        output_cells.remove(pos);
-    }
-
-    public static void addBlockGate(BlockPos pos, Gate gate,
-                                    EnumFacing[] input_faces, EnumFacing[] output_faces){
-        Node[] input_nodes = gate.getInputNodes();
-        for(int i = 0; i < input_faces.length; i++){
-            Joint joint = new Joint(pos, input_faces[i]);
-            installJoint(joint, input_nodes[i]);
-        }
-        Node[] output_nodes = gate.getOutputNodes();
-        for(int i = 0; i < output_faces.length; i++){
-            Joint joint = new Joint(pos, output_faces[i]);
-            installJoint(joint, output_nodes[i]);
-        }
-        gate_cells.put(pos, gate);
-        if(verbose)
-            System.out.println("add " + gate + " at " + pos);
-        evaluate(input_nodes);
-    }
-
-    public static void removeBlockGate(BlockPos pos, EnumFacing[] input_faces, EnumFacing[] output_faces){
-        Set<Node> nodes = new HashSet<>();
-        Gate gate = gate_cells.get(pos);
-        gate.dettach();
-
-        for(EnumFacing facing : input_faces){
-            Joint joint = new Joint(pos, facing);
-            joint_node.remove(joint);
-        }
-
-        for(EnumFacing facing : output_faces){
-            Joint joint = new Joint(pos, facing);
-            nodes.add(joint_node.get(joint));
-            joint_node.remove(joint);
-        }
-
-        if(verbose)
-            System.out.println("remove " + gate + " at " + pos);
-        gate_cells.remove(pos);
-        for(Node node : nodes)
-            node.setState(false);
-        evaluate(nodes.toArray(new Node[0]));
-    }
-
-    public static void addBlockWire(BlockPos pos, EnumFacing[] faces){
-        Node node = new Node();
-        for(EnumFacing facing : faces){
-            Joint joint = new Joint(pos, facing);
-            node = installJoint(joint, node);
-            if(verbose)
-                System.out.println("add wire " + node + " at " + joint);
-        }
-        evaluate(new Node[]{node});
-    }
-
-    public static void removeBlockWire(BlockPos pos, EnumFacing[] faces){
-        Set<Node> newnodes = new HashSet<>();
-        for(EnumFacing facing : faces){
-            Joint wirejoint = new Joint(pos, facing);
-            Node oldnode = joint_node.get(wirejoint);
-            Node newnode = new Node();
-            Joint[] linkedjoints = joint_node.getLinkedJoints(wirejoint);
-            joint_node.remove(wirejoint);
-            for(Joint joint : linkedjoints){
-                Gate gate = gate_cells.get(joint.pos);
-                if(gate != null){
-                    gate.replaceNode(oldnode, newnode);
-                }
-                Boolean inputstate = input_blocks.get(joint.pos);
-                if(inputstate != null)
-                    newnode.setState(inputstate);
-                if(output_cells.contains(joint.pos))
-                    newnode.addListener(output_listener);
-                joint_node.remove(joint);
-                joint_node.put(joint, newnode);
-            }
-            if(linkedjoints.length > 0)
-                newnodes.add(newnode);
-        }
-        if(verbose)
-            System.out.println("remove wire " + " at " + pos);
-
-        evaluate(newnodes.toArray(new Node[0]));
-    }
-
-    private static Node[] getInputNodes(){
-        Set<Node> nodes = new HashSet<>();
-        for(BlockPos pos : input_blocks.keySet()){
-            Node node = null;
-            for(EnumFacing facing : EnumFacing.values()){
-                Joint joint = new Joint(pos, facing);
-                node = joint_node.get(joint);
-                if(node != null)
-                    break;
-            }
-            nodes.add(node);
-        }
-        return nodes.toArray(new Node[0]);
-    }
-
-    public static void printCircuit(){
-        Analyser analyser = new Analyser();
-        String s = analyser.getGraphViz(getInputNodes());
-        System.out.println(s);
     }
 }

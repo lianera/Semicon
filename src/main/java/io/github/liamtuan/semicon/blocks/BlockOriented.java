@@ -13,7 +13,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BlockOriented extends Block {
+public abstract class BlockOriented extends Block {
 
     public static final PropertyDirection PROPERTYFACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
@@ -63,27 +63,5 @@ public class BlockOriented extends Block {
         IBlockState state = world.getBlockState(pos);
         EnumFacing block_facing = state.getValue(PROPERTYFACING);
         return block_facing;
-    }
-
-    public EnumFacing getWorldFacing(EnumFacing block_facing, EnumFacing facing){
-        EnumFacing world_facing = facing;
-        if(facing != EnumFacing.UP && facing != EnumFacing.DOWN){
-            world_facing = EnumFacing.fromAngle(
-                    block_facing.getHorizontalAngle() +
-                            facing.getHorizontalAngle() - EnumFacing.NORTH.getHorizontalAngle()
-            );
-        }
-        return world_facing;
-    }
-
-    public EnumFacing getLocalFacing(EnumFacing block_facing, EnumFacing world_facing){
-        EnumFacing facing = world_facing;
-        if(world_facing != EnumFacing.UP && world_facing != EnumFacing.DOWN){
-            facing = EnumFacing.fromAngle(
-                    world_facing.getHorizontalAngle() - block_facing.getHorizontalAngle() +
-                            EnumFacing.NORTH.getHorizontalAngle()
-            );
-        }
-        return facing;
     }
 }

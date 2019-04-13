@@ -1,18 +1,12 @@
 package io.github.liamtuan.semicon.sim;
 
-import io.github.liamtuan.semicon.core.AndGate;
-import io.github.liamtuan.semicon.core.Gate;
-import io.github.liamtuan.semicon.core.Node;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import static io.github.liamtuan.semicon.sim.Dir.*;
 
 public class SimTest {
     public SimTest(){
     }
 
     public void testAll(){
-        if(!jointTest())
-            System.out.println("joint test failed");
         if(!ioTest())
             System.out.println("io test failed");
         if(!wireTest())
@@ -25,28 +19,19 @@ public class SimTest {
             System.out.println("gate loop test failed");
     }
 
-    private boolean jointTest(){
-        Joint j1 = new Joint(new BlockPos(1,2,3), EnumFacing.NORTH);
-        Joint j2 = new Joint(new BlockPos(1,2,3), EnumFacing.NORTH);
-        if(!j1.equals(j2))
-            return false;
-        if(j1.hashCode() != j2.hashCode())
-            return false;
-        return true;
-    }
-
     private boolean ioTest(){
         Circuit.init();
-        BlockPos in = new BlockPos(0,0,0);
-        Circuit.addInput(in, EnumFacing.NORTH);
-        BlockPos led = new BlockPos(0, 0, -1);
-        Circuit.addOutput(led, EnumFacing.values());
-        Circuit.setInputState(in, EnumFacing.NORTH, true);
-        if(!Circuit.getState(led))
+        UnitPin pin = new UnitPin(new Cell(0,0, 0), Dir.NEGZ);
+        Circuit.add(pin);
+        UnitLed led = new UnitLed(new Cell(0, 0, -1));
+        Circuit.add(led);
+
+        Circuit.setInpuState(pin.getPos(), true);
+        if(!Circuit.getOutputState(led.getPos()))
             return false;
 
-        Circuit.removeInput(in, new EnumFacing[]{EnumFacing.NORTH});
-        if(Circuit.getState(led))
+        Circuit.remove(pin.getPos());
+        if(Circuit.getOutputState(led.getPos()))
             return false;
 
         return true;
@@ -55,21 +40,26 @@ public class SimTest {
     private boolean wireTest(){
         Circuit.init();
         //Circuit.setVerbose(true);
-        BlockPos in = new BlockPos(0,0,0);
-        Circuit.addInput(in, EnumFacing.NORTH);
-        BlockPos wire = new BlockPos(0, 0, -1);
-        EnumFacing[] wirefaces = new EnumFacing[]{EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.EAST};
-        Circuit.addBlockWire(wire, wirefaces);
-        BlockPos led = new BlockPos(0, 0, -2);
-        Circuit.addOutput(led, EnumFacing.values());
-        BlockPos led2 = new BlockPos(1, 0, -1);
-        Circuit.addOutput(led2, EnumFacing.values());
-        Circuit.setInputState(in, EnumFacing.NORTH, true);
-        if(!Circuit.getState(led) || !Circuit.getState(led2))
+        UnitPin pin = new UnitPin(new Cell(0,0,0), Dir.NEGZ);
+        Circuit.add(pin);
+        UnitWire wire = new UnitWire(new Cell(0, 0, -1), new Dir[]{NEGZ, POSZ, POSX});
+        Circuit.add(wire);
+        UnitLed led = new UnitLed(new Cell(0, 0, -2));
+        Circuit.add(led);
+        UnitLed led2 = new UnitLed(new Cell(1, 0, -1));
+        Circuit.add(led2);
+
+        Circuit.setInpuState(pin.getPos(), true);
+        if(!Circuit.getOutputState(led.getPos()))
+            return false;
+        if(!Circuit.getOutputState(led2.getPos()))
             return false;
 
-        Circuit.removeBlockWire(wire, wirefaces);
-        if(Circuit.getState(led) || Circuit.getState(led2))
+        Circuit.remove(wire.getPos());
+
+        if(Circuit.getOutputState(led.getPos()))
+            return false;
+        if(Circuit.getOutputState(led2.getPos()))
             return false;
 
         return true;
@@ -77,35 +67,39 @@ public class SimTest {
 
     private static boolean wireLoopTest(){
         Circuit.init();
-        //Circuit.setVerbose(true);
-        BlockPos in = new BlockPos(0,0,0);
-        Circuit.addInput(in, EnumFacing.SOUTH);
-        BlockPos led = new BlockPos(-2, 0, 1);
-        Circuit.addOutput(led, EnumFacing.values());
-        EnumFacing[] faces = {EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH, EnumFacing.WEST};
-        Circuit.addBlockWire(new BlockPos(-1, 0, 1), faces);
-        Circuit.addBlockWire(new BlockPos(-1, 0, 2), faces);
-        Circuit.addBlockWire(new BlockPos(0, 0, 2), faces);
-        Circuit.addBlockWire(new BlockPos(0, 0, 1), faces);
-        //Circuit.printCircuit();
-        Circuit.setInputState(in, EnumFacing.SOUTH, true);
-        if(!Circuit.getState(led))
+        Circuit.setDebugLevel(5);
+        UnitPin pin = new UnitPin(new Cell(0, 0, 0), POSZ);
+        Circuit.add(pin);
+        UnitLed led = new UnitLed(new Cell(-2, 0, 1));
+        Circuit.add(led);
+        UnitWire wire1 = new UnitWire(new Cell(-1, 0, 1), Dir.horizValues());
+        UnitWire wire2 = new UnitWire(new Cell(-1, 0, 2), Dir.horizValues());
+        UnitWire wire3 = new UnitWire(new Cell(0, 0, 2), Dir.horizValues());
+        UnitWire wire4 = new UnitWire(new Cell(0, 0, 1), Dir.horizValues());
+        Circuit.add(wire1);
+        Circuit.add(wire2);
+        Circuit.add(wire3);
+        Circuit.add(wire4);
+
+        Circuit.setInpuState(pin.getPos(), true);
+        if(!Circuit.getOutputState(led.getPos()))
             return false;
-        Circuit.removeBlockWire(new BlockPos(0, 0, 1), faces);
-        if(Circuit.getState(led))
+        Circuit.remove(wire4.getPos());
+
+        if(Circuit.getOutputState(led.getPos()))
             return false;
-        Circuit.removeBlockWire(new BlockPos(0, 0, 2), faces);
-        if(Circuit.getState(led))
+        Circuit.remove(wire3.getPos());
+        if(Circuit.getOutputState(led.getPos()))
             return false;
-        Circuit.addBlockWire(new BlockPos(0, 0, 2), faces);
-        if(Circuit.getState(led))
+        Circuit.add(wire3);
+        if(Circuit.getOutputState(led.getPos()))
             return false;
-        Circuit.addBlockWire(new BlockPos(0, 0, 1), faces);
-        if(!Circuit.getState(led))
+        Circuit.add(wire4);
+        if(!Circuit.getOutputState(led.getPos()))
             return false;
-        Circuit.removeBlockWire(new BlockPos(0, 0, 2), faces);
-        Circuit.removeBlockWire(new BlockPos(0, 0, 1), faces);
-        if(Circuit.getState(led))
+        Circuit.remove(wire3.getPos());
+        Circuit.remove(wire4.getPos());
+        if(Circuit.getOutputState(led.getPos()))
             return false;
 
         return true;
@@ -113,28 +107,26 @@ public class SimTest {
 
     private boolean gateTest(){
         Circuit.init();
-        //Circuit.setVerbose(true);
-        BlockPos in = new BlockPos(0,0,0);
-        Circuit.addInput(in, EnumFacing.NORTH);
-        BlockPos in2 = new BlockPos(1,0,-1);
-        Circuit.addInput(in2, EnumFacing.WEST);
-        BlockPos gatepos = new BlockPos(0, 0, -1);
-        Gate gate = new AndGate(new Node(), new Node(), new Node());
-        EnumFacing[] infaces = new EnumFacing[]{EnumFacing.SOUTH, EnumFacing.EAST};
-        EnumFacing[] outfaces = new EnumFacing[]{EnumFacing.NORTH};
-        Circuit.addBlockGate(gatepos, gate,
-                infaces, outfaces);
+        UnitPin pin = new UnitPin(new Cell(0, 0, 0), NEGZ);
+        Circuit.add(pin);
+        UnitPin pin2 = new UnitPin(new Cell(1, 0, -1), NEGX);
+        Circuit.add(pin2);
 
-        BlockPos led = new BlockPos(0, 0, -2);
-        Circuit.addOutput(led, EnumFacing.values());
+        UnitGate gate = new UnitGate(new Cell(0, 0, -1),
+                new Dir[]{POSZ, POSX}, new Dir[]{NEGZ},"and");
+        Circuit.add(gate);
 
-        Circuit.setInputState(in, EnumFacing.NORTH, true);
-        Circuit.setInputState(in2, EnumFacing.WEST, true);
-        if(!Circuit.getState(led))
+        UnitLed led = new UnitLed(new Cell(0, 0, -2));
+        Circuit.add(led);
+
+        Circuit.setInpuState(pin.getPos(), true);
+        Circuit.setInpuState(pin2.getPos(), true);
+
+        if(!Circuit.getOutputState(led.getPos()))
             return false;
 
-        Circuit.removeBlockGate(gatepos, infaces, outfaces);
-        if(Circuit.getState(led))
+        Circuit.remove(gate.getPos());
+        if(Circuit.getOutputState(led.getPos()))
             return false;
 
         return true;
@@ -142,26 +134,31 @@ public class SimTest {
 
     private boolean gateLoopTest(){
         Circuit.init();
+        UnitLed led = new UnitLed(new Cell(0, 0, 4));
+        Circuit.add(led);
+
+        UnitGate notgate = new UnitGate(new Cell(0, 0, 2),
+                new Dir[]{POSZ}, new Dir[]{NEGZ},"not");
+        Circuit.add(notgate);
+
+        Circuit.add(new UnitWire(new Cell(0, 0, 1), Dir.horizValues()));
+        Circuit.add(new UnitWire(new Cell(1, 0, 1), Dir.horizValues()));
+        Circuit.add(new UnitWire(new Cell(1, 0, 2), Dir.horizValues()));
+        Circuit.add(new UnitWire(new Cell(1, 0, 3), Dir.horizValues()));
+        Circuit.add(new UnitWire(new Cell(0, 0, 3), Dir.horizValues()));
+
         //Circuit.setVerbose(true);
-        BlockPos led = new BlockPos(0, 0, 4);
-        Circuit.addOutput(led, EnumFacing.values());
-        EnumFacing[] faces = {EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH, EnumFacing.WEST};
-        Circuit.addBlockWire(new BlockPos(0, 0, 1), faces);
-        Circuit.addBlockWire(new BlockPos(1, 0, 1), faces);
-        Circuit.addBlockWire(new BlockPos(1, 0, 2), faces);
-        Circuit.addBlockWire(new BlockPos(1, 0, 3), faces);
-        Circuit.addBlockWire(new BlockPos(0, 0, 3), faces);
+        Circuit.remove(new Cell(1, 0, 2));
 
-        Circuit.removeBlockWire(new BlockPos(1, 0, 2), faces);
+        UnitPin pin = new UnitPin(new Cell(0,0,0), POSZ);
+        Circuit.add(pin);
+        //Circuit.printCircuit();
 
-        BlockPos in = new BlockPos(0,0,0);
-        Circuit.addInput(in, EnumFacing.SOUTH);
-
-        if(!Circuit.getState(led))
+        if(!Circuit.getOutputState(led.getPos()))
             return false;
 
-        Circuit.setInputState(in, EnumFacing.SOUTH, true);
-        if(!Circuit.getState(led))
+        Circuit.setInpuState(pin.getPos(), true);
+        if(!Circuit.getOutputState(led.getPos()))
             return false;
 
         return true;

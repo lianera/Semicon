@@ -1,18 +1,17 @@
 package io.github.liamtuan.semicon.blocks.wire;
 
-import io.github.liamtuan.semicon.blocks.BlockOriented;
-import io.github.liamtuan.semicon.sim.Circuit;
+import io.github.liamtuan.semicon.Util;
+import io.github.liamtuan.semicon.blocks.BlockUnit;
+import io.github.liamtuan.semicon.sim.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public abstract class BlockWire extends BlockOriented {
+public abstract class BlockWire extends BlockUnit {
     BlockWire() {
         super(Material.IRON);
     }
@@ -38,33 +37,19 @@ public abstract class BlockWire extends BlockOriented {
         return EnumBlockRenderType.MODEL;
     }
 
-    abstract EnumFacing[] getConnectedFaces();
+    abstract EnumFacing[] getLocalFaces();
 
-    public EnumFacing[] getJointFaces(EnumFacing block_facing){
-        EnumFacing[] faces = getConnectedFaces();
-        for(int i = 0; i < faces.length; i++){
-            faces[i] = getWorldFacing(block_facing, faces[i]);
-        }
-        return faces;
+    @Override
+    public Unit createUnit(World worldIn, BlockPos pos) {
+        EnumFacing block_facing = getBlockFacing(worldIn, pos);
+        Cell cell = Util.blockPosToCell(pos);
+        Dir[] dirs = Util.localFacesToWorldDirs(getLocalFaces(), block_facing);
+        UnitWire wire = new UnitWire(cell, dirs);
+        return wire;
     }
 
     @Override
-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
-        super.onBlockAdded(worldIn, pos, state);
-
-        EnumFacing block_facing = state.getValue(PROPERTYFACING);
-        EnumFacing[] jointfaces = getJointFaces(block_facing);
-        Circuit.addBlockWire(pos, jointfaces);
+    public void rightClicked(World worldIn, BlockPos pos, EnumFacing handonface) {
 
     }
-
-    @Override
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        EnumFacing block_facing = state.getValue(PROPERTYFACING);
-        EnumFacing[] faces = getJointFaces(block_facing);
-
-        Circuit.removeBlockWire(pos, faces);
-        super.breakBlock(worldIn, pos, state);
-    }
-
 }

@@ -1,14 +1,12 @@
 package io.github.liamtuan.semicon.blocks.io;
 
-import io.github.liamtuan.semicon.sim.Circuit;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import io.github.liamtuan.semicon.Util;
+import io.github.liamtuan.semicon.sim.*;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BlockPin extends BlockInput {
+public class BlockPin extends BlockIO {
     public BlockPin() {
         setRegistryName("pin");
         setUnlocalizedName("pin");
@@ -16,28 +14,22 @@ public class BlockPin extends BlockInput {
     }
 
     @Override
-    EnumFacing[] getConnectedFaces() {
-        return new EnumFacing[]{EnumFacing.NORTH};
+    public Unit createUnit(World worldIn, BlockPos pos) {
+        EnumFacing facing = getBlockFacing(worldIn, pos);
+        Dir dir = Util.facingToDir(facing);
+        Cell cell = Util.blockPosToCell(pos);
+        return new UnitPin(cell, dir);
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos,
-                                    IBlockState state,
-                                    EntityPlayer playerIn,
-                                    EnumHand hand,
-                                    EnumFacing facing,
-                                    float hitX, float hitY, float hitZ) {
-        EnumFacing blockfacing = state.getValue(PROPERTYFACING);
-        EnumFacing handonface = getLocalFacing(blockfacing, facing);
-        if(handonface != EnumFacing.NORTH && !worldIn.isRemote) {
-            boolean onoff_state = state.getValue(PROPERTYSTATE);
-            onoff_state = !onoff_state;
-            state = state.withProperty(PROPERTYSTATE, onoff_state);
-            worldIn.setBlockState(pos, state);
-
-            Circuit.setInputState(pos, blockfacing, onoff_state);
-            return true;
-        }
-        return false;
+    public void rightClicked(World worldIn, BlockPos pos, EnumFacing handonface) {
+        EnumFacing facing = getBlockFacing(worldIn, pos);
+        if (facing == handonface)
+            return;
+        boolean state = getBlockState(worldIn, pos);
+        state = !state;
+        setBlockState(worldIn, pos, state);
+        Cell cell = Util.blockPosToCell(pos);
+        Circuit.setInpuState(cell, state);
     }
 }

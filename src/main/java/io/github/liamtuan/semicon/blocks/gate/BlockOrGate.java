@@ -1,8 +1,8 @@
 package io.github.liamtuan.semicon.blocks.gate;
 
-import io.github.liamtuan.semicon.core.Gate;
-import io.github.liamtuan.semicon.core.Node;
-import io.github.liamtuan.semicon.core.OrGate;
+import io.github.liamtuan.semicon.sim.core.Gate;
+import io.github.liamtuan.semicon.sim.core.Node;
+import io.github.liamtuan.semicon.sim.core.OrGate;
 import net.minecraft.util.EnumFacing;
 
 public class BlockOrGate extends BlockGate {
@@ -12,21 +12,18 @@ public class BlockOrGate extends BlockGate {
     }
 
     @Override
-    protected EnumFacing[] localIntpuFaces() {
+    String getGateType() {
+        return "or";
+    }
+
+    @Override
+    EnumFacing[] getLocalInputFaces() {
         return new EnumFacing[]{EnumFacing.SOUTH, EnumFacing.EAST};
     }
 
     @Override
-    protected EnumFacing[] localOutputFaces() {
+    EnumFacing[] getLocalOutputFaces() {
         return new EnumFacing[]{EnumFacing.NORTH};
-    }
-
-    @Override
-    protected Gate createGate() {
-        Node y = new Node();
-        Node a = new Node();
-        Node b = new Node();
-        return new OrGate(a, b, y);
     }
 
 }

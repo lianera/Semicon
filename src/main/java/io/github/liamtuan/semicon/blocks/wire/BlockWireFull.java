@@ -10,7 +10,7 @@ public class BlockWireFull extends BlockWire {
     }
 
     @Override
-    EnumFacing[] getConnectedFaces() {
+    EnumFacing[] getLocalFaces() {
         return EnumFacing.values();
     }
 }

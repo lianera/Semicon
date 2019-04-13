@@ -1,9 +1,8 @@
-package io.github.liamtuan.semicon.core;
+package io.github.liamtuan.semicon.sim.core;
 
-
-public class NotGate extends Gate{
+public abstract class X1Y1Gate extends Gate{
     Node x, y;
-    public NotGate(Node x, Node y)
+    public X1Y1Gate(Node x, Node y)
     {
         this.x = x;
         this.y  =y;
@@ -30,13 +29,4 @@ public class NotGate extends Gate{
         y = nodes[0];
     }
 
-    @Override
-    void evel() {
-        y.setState(!x.getState());
-    }
-
-    @Override
-    public String toString() {
-        return "NotGate" + getId();
-    }
 }

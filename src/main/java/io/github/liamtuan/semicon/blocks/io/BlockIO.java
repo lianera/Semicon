@@ -1,6 +1,11 @@
 package io.github.liamtuan.semicon.blocks.io;
 
+import io.github.liamtuan.semicon.Util;
 import io.github.liamtuan.semicon.blocks.BlockOriented;
+import io.github.liamtuan.semicon.blocks.BlockUnit;
+import io.github.liamtuan.semicon.sim.Cell;
+import io.github.liamtuan.semicon.sim.Circuit;
+import io.github.liamtuan.semicon.sim.Dir;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -12,7 +17,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public abstract class BlockIO extends BlockOriented {
+public abstract class BlockIO extends BlockUnit {
     public static final PropertyBool PROPERTYSTATE = PropertyBool.create("state");
 
     BlockIO() {
@@ -23,15 +28,6 @@ public abstract class BlockIO extends BlockOriented {
     protected BlockStateContainer createBlockState() {
         BlockStateContainer container = new BlockStateContainer(this, new IProperty[] {PROPERTYFACING, PROPERTYSTATE});
         return container;
-    }
-
-    public void setState(World worldIn, BlockPos pos, boolean on_off_state){
-        IBlockState blockState = worldIn.getBlockState(pos);
-        boolean oldstate = blockState.getValue(PROPERTYSTATE);
-        if(on_off_state != oldstate){
-            blockState = blockState.withProperty(PROPERTYSTATE, on_off_state);
-            worldIn.setBlockState(pos, blockState);
-        }
     }
 
     @Override
@@ -71,15 +67,23 @@ public abstract class BlockIO extends BlockOriented {
         return state;
     }
 
-
-    abstract EnumFacing[] getConnectedFaces();
-
-
-    public EnumFacing[] getJointFaces(EnumFacing block_facing){
-        EnumFacing[] faces = getConnectedFaces();
-        for(int i = 0; i < faces.length; i++){
-            faces[i] = getWorldFacing(block_facing, faces[i]);
-        }
-        return faces;
+    boolean getBlockState(World world, BlockPos pos){
+        return world.getBlockState(pos).getValue(PROPERTYSTATE);
     }
+
+    void setBlockState(World world, BlockPos pos, boolean state){
+        IBlockState oldblockstate = world.getBlockState(pos);
+        if(oldblockstate.getValue(PROPERTYSTATE) == state)
+            return;
+        IBlockState newblockstate = oldblockstate.withProperty(PROPERTYSTATE, state);
+        world.setBlockState(pos, newblockstate);
+    }
+}
+
+
+abstract class BlockInput extends BlockIO{
+}
+
+abstract class BlockOutput extends BlockIO{
+
 }
