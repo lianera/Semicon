@@ -21,8 +21,9 @@ public class SimTest {
 
     private boolean ioTest(){
         Circuit.init();
+        //Circuit.setDebugLevel(5);
         UnitPin pin = new UnitPin(new Cell(0,0, 0), Dir.NEGZ);
-        Circuit.add(pin);
+        Circuit.add(new UnitPin(new Cell(0,0, 0), Dir.NEGZ));
         UnitLed led = new UnitLed(new Cell(0, 0, -1));
         Circuit.add(led);
 
@@ -67,7 +68,7 @@ public class SimTest {
 
     private static boolean wireLoopTest(){
         Circuit.init();
-        Circuit.setDebugLevel(5);
+        //Circuit.setDebugLevel(5);
         UnitPin pin = new UnitPin(new Cell(0, 0, 0), POSZ);
         Circuit.add(pin);
         UnitLed led = new UnitLed(new Cell(-2, 0, 1));
@@ -91,10 +92,10 @@ public class SimTest {
         Circuit.remove(wire3.getPos());
         if(Circuit.getOutputState(led.getPos()))
             return false;
-        Circuit.add(wire3);
+        Circuit.add(new UnitWire(new Cell(0, 0, 2), Dir.horizValues()));
         if(Circuit.getOutputState(led.getPos()))
             return false;
-        Circuit.add(wire4);
+        Circuit.add(new UnitWire(new Cell(0, 0, 1), Dir.horizValues()));
         if(!Circuit.getOutputState(led.getPos()))
             return false;
         Circuit.remove(wire3.getPos());
@@ -134,11 +135,12 @@ public class SimTest {
 
     private boolean gateLoopTest(){
         Circuit.init();
+        //Circuit.setDebugLevel(5);
         UnitLed led = new UnitLed(new Cell(0, 0, 4));
         Circuit.add(led);
 
         UnitGate notgate = new UnitGate(new Cell(0, 0, 2),
-                new Dir[]{POSZ}, new Dir[]{NEGZ},"not");
+                    new Dir[]{NEGZ}, new Dir[]{POSZ},"not");
         Circuit.add(notgate);
 
         Circuit.add(new UnitWire(new Cell(0, 0, 1), Dir.horizValues()));
@@ -158,7 +160,7 @@ public class SimTest {
             return false;
 
         Circuit.setInpuState(pin.getPos(), true);
-        if(!Circuit.getOutputState(led.getPos()))
+        if(Circuit.getOutputState(led.getPos()))
             return false;
 
         return true;

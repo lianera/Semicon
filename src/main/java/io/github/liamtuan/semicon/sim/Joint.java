@@ -1,25 +1,33 @@
 package io.github.liamtuan.semicon.sim;
 
 public class Joint {
-    Cell pos;
+    Cell cell;
     Dir dir;
     Joint(Cell cell, Dir dir){
-        this.pos = cell;
+        this.cell = cell;
         this.dir = dir;
     }
 
-    Joint linkedJoint(){
-        return new Joint(dir.offset(pos), dir.opposite());
-    }
-
-    @Override
-    public int hashCode() {
-        return pos.hashCode()*6 + dir.hashCode();
+    Joint getLinkedJoint(){
+        Cell pos = dir.offset(cell);
+        return new Joint(pos, dir.opposite());
     }
 
     @Override
     public boolean equals(Object obj) {
+        if(!(obj instanceof Joint))
+            return false;
         Joint jobj = (Joint)obj;
-        return jobj.pos.equals(pos) && jobj.dir.equals(dir);
+        return this.cell.equals(jobj.cell) && this.dir.equals(jobj.dir);
+    }
+
+    @Override
+    public int hashCode() {
+        return cell.hashCode()*6 + dir.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "(" + cell.x + "," + cell.y + "," + cell.z + "," + dir + ")";
     }
 }

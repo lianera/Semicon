@@ -2,9 +2,7 @@ package io.github.liamtuan.semicon.sim;
 
 import io.github.liamtuan.semicon.sim.core.Node;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Unit {
     private Cell pos;
@@ -14,20 +12,40 @@ public abstract class Unit {
     Cell getPos(){
         return pos;
     }
-    abstract Node getNode(Dir dir);
-    abstract void setNode(Dir dir, Node node);
+    abstract Map<Dir, Node> getNodes();
+    abstract void setNodes(Map<Dir, Node> nodemap);
+
+    Set<Node> getNodeSet(){
+        Set<Node> nodes = new HashSet<>(getNodes().values());
+        return nodes;
+    }
+
+    void replaceNode(Node oldnode, Node newnode){
+        Map<Dir, Node> nodes = getNodes();
+        nodes.forEach((dir, node)->{
+            if(node == oldnode)
+                nodes.put(dir, newnode);
+        });
+        setNodes(nodes);
+    }
+
+    Node getNode(Dir dir){
+        Map<Dir, Node> nodes = getNodes();
+        return nodes.get(dir);
+    }
+
+    void setNode(Dir dir, Node node){
+        Map<Dir, Node> nodeset = new HashMap<>();
+        nodeset.put(dir, node);
+        setNodes(nodeset);
+    }
+
+    Set<Dir> getFaces(){
+        return getNodes().keySet();
+    }
+
     void update(){};
     void dettach(){};
-
-    Set<Node> getAllNodes(){
-        Set<Node> nodeset = new HashSet<>();
-        for(Dir d : Dir.values()){
-            Node node = getNode(d);
-            if(node != null)
-                nodeset.add(node);
-        }
-        return nodeset;
-    }
 }
 
 abstract class UnitIO extends Unit{

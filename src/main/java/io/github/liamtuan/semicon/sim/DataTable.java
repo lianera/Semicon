@@ -16,42 +16,42 @@ public class DataTable {
         node_cells = new HashMap<>();
     }
 
-    void put(Cell cell, Unit unit){
+    void putUnit(Cell cell, Unit unit){
         cell_unit.put(cell, unit);
-        Set<Node> nodeset = unit.getAllNodes();
+        Set<Node> nodeset = unit.getNodeSet();
         for(Node node : nodeset){
-            Set<Cell> cellset = node_cells.get(node);
-            if(cellset == null){
-                cellset = new HashSet<>();
-                node_cells.put(node, cellset);
-            }
-            cellset.add(cell);
+            addNodeCell(node, cell);
         }
     }
 
-    Unit get(Cell cell){
+    Unit getUnit(Cell cell){
         return cell_unit.get(cell);
     }
 
-    Set<Cell> get(Node node){
+    Set<Cell> getNodeCells(Node node){
         return node_cells.get(node);
     }
 
-    void remove(Cell cell){
+    Set<Unit> getNodeUnits(Node node){
+        Set<Unit> units = new HashSet<>();
+        Set<Cell> cells = node_cells.get(node);
+        if(cells == null)
+            return units;
+        for(Cell cell : cells)
+            units.add(cell_unit.get(cell));
+        return units;
+    }
+
+    void removeCell(Cell cell){
         Unit unit = cell_unit.get(cell);
-        Set<Node> nodeset = unit.getAllNodes();
+        Set<Node> nodeset = unit.getNodeSet();
         for(Node node : nodeset) {
-            Set<Cell> cellset = node_cells.get(node);
-            if(cellset != null && cellset.contains(cell)) {
-                cellset.remove(cell);
-                if(cellset.isEmpty())
-                    node_cells.remove(node);
-            }
+            removeNodeCell(node, cell);
         }
         cell_unit.remove(cell);
     }
 
-    void replace(Node src, Node dst){
+    void replaceNode(Node src, Node dst){
         Set<Cell> srccells = node_cells.get(src);
         Set<Cell> dstcells = node_cells.get(dst);
         if(srccells == null)
@@ -61,28 +61,41 @@ public class DataTable {
             node_cells.put(dst, dstcells);
         }
         // replace all nodes
-        replace(srccells, src, dst);
+        for(Cell sc : srccells){
+            Unit unit = cell_unit.get(sc);
+            unit.replaceNode(src, dst);
+        }
 
         // combine node cells
         dstcells.addAll(srccells);
         node_cells.remove(src);
     }
 
-    void replace(Set<Cell> cells, Node src, Node dst){
-        for(Cell sc : cells){
-            Unit unit = cell_unit.get(sc);
-            for(Dir d : Dir.values()){
-                if(unit.getNode(d) == src)
-                    unit.setNode(d, dst);
-            }
-        }
+    void setUnitNode(Unit unit, Dir dir, Node node){
+        Node oldnode = unit.getNode(dir);
+        unit.setNode(dir, node);
+        Set<Node> nodeset = unit.getNodeSet();
+        if(!nodeset.contains(oldnode))
+            removeNodeCell(oldnode, unit.getPos());
+        addNodeCell(node, unit.getPos());
     }
 
-    void replaceJointsNode(Set<Joint> joints, Node src, Node dst){
-        for(Joint joint : joints){
-            Unit unit = cell_unit.get(joint.pos);
-            if(unit.getNode(joint.dir) == src)
-                unit.setNode(joint.dir, dst);
+    private void addNodeCell(Node node, Cell cell){
+        Set<Cell> cellset = node_cells.get(node);
+        if(cellset == null){
+            cellset = new HashSet<>();
+            node_cells.put(node, cellset);
+        }
+        cellset.add(cell);
+
+    }
+
+    private void removeNodeCell(Node node, Cell cell){
+        Set<Cell> cellset = node_cells.get(node);
+        if(cellset != null && cellset.contains(cell)) {
+            cellset.remove(cell);
+            if(cellset.isEmpty())
+                node_cells.remove(node);
         }
     }
 }

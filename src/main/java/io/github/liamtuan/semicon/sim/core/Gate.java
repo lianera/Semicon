@@ -20,7 +20,7 @@ public abstract class Gate{
         return id;
     }
 
-    void attach()
+    public void attach()
     {
         for(Node node : getInputNodes()){
             node.outgates.add(this);

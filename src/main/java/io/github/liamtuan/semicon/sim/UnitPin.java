@@ -2,6 +2,7 @@ package io.github.liamtuan.semicon.sim;
 
 import io.github.liamtuan.semicon.sim.core.Node;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class UnitPin extends UnitInput {
@@ -21,19 +22,6 @@ public class UnitPin extends UnitInput {
     }
 
     @Override
-    Node getNode(Dir dir) {
-        if(dir == this.dir)
-            return node;
-        return null;
-    }
-
-    @Override
-    void setNode(Dir dir, Node node) {
-        if(dir == this.dir)
-            this.node = node;
-    }
-
-    @Override
     public String toString() {
         return "Pin{" + getPos() + "," + dir + "," + state + "," + node + "}";
     }
@@ -42,6 +30,20 @@ public class UnitPin extends UnitInput {
     void setState(boolean state) {
         this.state = state;
         node.setState(state);
+    }
+
+    @Override
+    Map<Dir, Node> getNodes() {
+        Map<Dir, Node> map = new HashMap<>();
+        map.put(dir, node);
+        return map;
+    }
+
+    @Override
+    void setNodes(Map<Dir, Node> nodemap) {
+        Node t = nodemap.get(dir);
+        if(t != null)
+            node = t;
     }
 
     @Override
