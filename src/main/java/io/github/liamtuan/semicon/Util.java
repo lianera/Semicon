@@ -13,6 +13,10 @@ public class Util {
         return new Cell(pos.getX(), pos.getY(), pos.getZ());
     }
 
+    public static BlockPos cellToBlockPos(Cell cell){
+        return new BlockPos(cell.x, cell.y, cell.z);
+    }
+
     public static Dir facingToDir(EnumFacing facing){
         switch (facing){
             case EAST:

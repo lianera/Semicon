@@ -28,9 +28,4 @@ public abstract class BlockGate extends BlockUnit {
         UnitGate gate = new UnitGate(cell, inputdirs, outputdirs, gatetype);
         return gate;
     }
-
-    @Override
-    public void rightClicked(World worldIn, BlockPos pos, EnumFacing handonface) {
-
-    }
 }

@@ -48,6 +48,9 @@ public class Node{
     public void addListener(NodeStateListener listener){
         listeners.add(listener);
     }
+    public void removeListener(NodeStateListener listener) {
+        listeners.remove(listener);
+    }
 
     public void invokeListener(){
         for(NodeStateListener listener : listeners)

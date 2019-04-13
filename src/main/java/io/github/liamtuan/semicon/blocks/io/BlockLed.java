@@ -8,7 +8,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BlockLed extends BlockIO {
+public class BlockLed extends BlockOutput {
     public BlockLed() {
         setRegistryName("led");
         setUnlocalizedName("led");
@@ -18,10 +18,5 @@ public class BlockLed extends BlockIO {
     public Unit createUnit(World worldIn, BlockPos pos) {
         Cell cell = Util.blockPosToCell(pos);
         return new UnitLed(cell);
-    }
-
-    @Override
-    public void rightClicked(World worldIn, BlockPos pos, EnumFacing handonface) {
-
     }
 }

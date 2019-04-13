@@ -67,23 +67,20 @@ public abstract class BlockIO extends BlockUnit {
         return state;
     }
 
-    boolean getBlockState(World world, BlockPos pos){
+    boolean setBlockCircuitState(World world, BlockPos pos){
         return world.getBlockState(pos).getValue(PROPERTYSTATE);
     }
 
-    void setBlockState(World world, BlockPos pos, boolean state){
+    public void setBlockCircuitState(World world, BlockPos pos, boolean state){
         IBlockState oldblockstate = world.getBlockState(pos);
         if(oldblockstate.getValue(PROPERTYSTATE) == state)
             return;
+
         IBlockState newblockstate = oldblockstate.withProperty(PROPERTYSTATE, state);
         world.setBlockState(pos, newblockstate);
     }
 }
 
 
-abstract class BlockInput extends BlockIO{
-}
 
-abstract class BlockOutput extends BlockIO{
 
-}

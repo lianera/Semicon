@@ -11,6 +11,13 @@ public class BlockWireFull extends BlockWire {
 
     @Override
     EnumFacing[] getLocalFaces() {
-        return EnumFacing.values();
+        return new EnumFacing[]{
+                EnumFacing.NORTH,
+                EnumFacing.EAST,
+                EnumFacing.SOUTH,
+                EnumFacing.WEST,
+                EnumFacing.UP,
+                EnumFacing.DOWN
+        };
     }
 }

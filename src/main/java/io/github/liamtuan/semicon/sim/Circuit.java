@@ -3,6 +3,7 @@ package io.github.liamtuan.semicon.sim;
 
 import io.github.liamtuan.semicon.sim.core.Analyser;
 import io.github.liamtuan.semicon.sim.core.Node;
+import io.github.liamtuan.semicon.sim.core.NodeStateListener;
 import io.github.liamtuan.semicon.sim.core.Processor;
 import org.apache.http.impl.conn.Wire;
 import org.lwjgl.Sys;
@@ -12,7 +13,9 @@ import java.util.*;
 public class Circuit{
     private static DataTable data;
     private static int debug_level;
-
+    private static StateListener output_listender;
+    private static StateListener output_cell_notifier;
+    private static Set<Cell> changedoutputs;
 
     public static void setDebugLevel(int i){
         debug_level = i;
@@ -21,6 +24,17 @@ public class Circuit{
     public static void init(){
         data = new DataTable();
         debug_level = 0;
+        changedoutputs = new HashSet<>();
+        output_listender = new StateListener() {
+            @Override
+            public void onStateChanged(Cell cell, boolean state) {
+                Circuit.changedoutputs.add(cell);
+            }
+        };
+    }
+
+    public static void setOutputNotifier(StateListener notifier){
+        Circuit.output_cell_notifier = notifier;
     }
 
     public static void add(Unit unit){
@@ -44,6 +58,13 @@ public class Circuit{
             neighbor_node.merge(node);
             data.replaceNode(node, neighbor_node);
         }
+
+        if(unit instanceof UnitOutput){
+            UnitOutput output = (UnitOutput)unit;
+            output.setListener(output_listender);
+        }
+
+        evaluate(unit.getNodeSet());
     }
 
     public static void remove(Cell cell){
@@ -51,6 +72,10 @@ public class Circuit{
             System.out.println("remove " + data.getUnit(cell));
         }
         Unit unit = data.getUnit(cell);
+        if(unit instanceof UnitOutput){
+            UnitOutput output = (UnitOutput)unit;
+            output.setListener(null);
+        }
         Set<Node> changednodes = unit.getNodeSet();
         if(unit instanceof UnitWire){
             changednodes = removeWire((UnitWire)unit);
@@ -63,8 +88,8 @@ public class Circuit{
         }else{
             data.removeCell(cell);
         }
+
         unit.dettach();
-        updateNodes(changednodes);
         evaluate(changednodes);
     }
 
@@ -74,7 +99,6 @@ public class Circuit{
             System.out.println("set input state " + input + " to " + state);
         input.setState(state);
         Set<Node> changednodes = input.getNodeSet();
-        updateNodes(changednodes);
         evaluate(changednodes);
     }
 
@@ -84,6 +108,7 @@ public class Circuit{
             System.out.println("get output state " + output + " " + output.getState());
         return output.getState();
     }
+
 
     private static Node neighborNode(Cell pos, Dir dir){
         Unit unit = data.getUnit(pos);
@@ -105,6 +130,7 @@ public class Circuit{
             Set<Unit> units = data.getNodeUnits(node);
             for(Unit unit : units)
                 unit.update();
+            node.invokeListener();
         }
         if(debug_level >= 2){
             String s = "update ";
@@ -115,15 +141,34 @@ public class Circuit{
     }
 
     private static void evaluate(Set<Node> nodes){
+        changedoutputs.clear();
+
+        updateNodes(nodes);
+
         Node[] nodearr = nodes.toArray(new Node[0]);
         Processor p = new Processor();
         p.eval(nodearr);
+
+        if(output_cell_notifier != null){
+            for(Cell changed : changedoutputs){
+                UnitOutput output = (UnitOutput)data.getUnit(changed);
+                output_cell_notifier.onStateChanged(changed, output.getState());
+            }
+        }
 
         if(debug_level >= 2){
             String s = "evaluate ";
             for(Node node : nodes)
                 s += node + "=" + node.getState() + ",";
             System.out.println(s);
+            s = "changed output [";
+            for(Cell changed : changedoutputs){
+                UnitOutput output = (UnitOutput)data.getUnit(changed);
+                s += changed + "->" + output.getState() + ",";
+            }
+            s += "]";
+            System.out.println(s);
+
         }
     }
 

@@ -7,6 +7,7 @@ import io.github.liamtuan.semicon.blocks.io.BlockClock;
 import io.github.liamtuan.semicon.blocks.io.BlockLed;
 import io.github.liamtuan.semicon.blocks.io.BlockPin;
 import io.github.liamtuan.semicon.blocks.wire.*;
+import io.github.liamtuan.semicon.sim.StateListener;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;

@@ -1,5 +1,6 @@
 package io.github.liamtuan.semicon.blocks;
 
+import io.github.liamtuan.semicon.App;
 import io.github.liamtuan.semicon.Util;
 import io.github.liamtuan.semicon.sim.*;
 import net.minecraft.block.material.Material;
@@ -16,35 +17,41 @@ public abstract class BlockUnit extends BlockOriented{
     }
 
     abstract public Unit createUnit(World worldIn, BlockPos pos);
-    abstract public void rightClicked(World worldIn, BlockPos pos, EnumFacing handonface);
+    public boolean rightClicked(World worldIn, BlockPos pos, EnumFacing handonface, boolean apply){
+        return false;
+    }
 
     @Override
     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
         super.onBlockAdded(worldIn, pos, state);
         Unit unit = createUnit(worldIn, pos);
         Circuit.add(unit);
+        App.updateOutputs(worldIn);
     }
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         Cell cell = Util.blockPosToCell(pos);
         Circuit.remove(cell);
+        App.updateOutputs(worldIn);
         super.breakBlock(worldIn, pos, state);
     }
 
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos,
+    public boolean onBlockActivated(World worldIn,
+                                    BlockPos pos,
                                     IBlockState state,
                                     EntityPlayer playerIn,
                                     EnumHand hand,
                                     EnumFacing facing,
                                     float hitX, float hitY, float hitZ) {
-
-        if(!worldIn.isRemote) {
-            rightClicked(worldIn, pos, facing);
-            return true;
-        }
-        return false;
+       if(hand == EnumHand.MAIN_HAND) {
+            boolean apply = !worldIn.isRemote;
+            boolean changed = rightClicked(worldIn, pos, facing, apply);
+            App.updateOutputs(worldIn);
+            return changed;
+       }
+       return false;
     }
 }

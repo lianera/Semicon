@@ -64,10 +64,15 @@ abstract class UnitInput extends UnitIO{
 }
 
 abstract class UnitOutput extends UnitIO{
+    StateListener output_listener;
 
     UnitOutput(Cell pos) {
         super(pos);
     }
 
+    void setListener(StateListener listener){
+        output_listener = listener;
+
+    }
     abstract boolean getState();
 }

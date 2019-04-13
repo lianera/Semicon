@@ -51,6 +51,8 @@ public enum Dir {
     }
 
     public Dir horizOffsetDir(Dir base){
+        if(index == 1 || index == 4 || base == POSY || base == NEGY)
+            return this;
         return fromHorizAngle(getHorizAngle() + base.getHorizAngle());
     }
 

@@ -6,7 +6,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BlockPin extends BlockIO {
+public class BlockPin extends BlockInput {
     public BlockPin() {
         setRegistryName("pin");
         setUnlocalizedName("pin");
@@ -22,14 +22,17 @@ public class BlockPin extends BlockIO {
     }
 
     @Override
-    public void rightClicked(World worldIn, BlockPos pos, EnumFacing handonface) {
+    public boolean rightClicked(World worldIn, BlockPos pos, EnumFacing handonface, boolean apply) {
         EnumFacing facing = getBlockFacing(worldIn, pos);
         if (facing == handonface)
-            return;
-        boolean state = getBlockState(worldIn, pos);
-        state = !state;
-        setBlockState(worldIn, pos, state);
-        Cell cell = Util.blockPosToCell(pos);
-        Circuit.setInpuState(cell, state);
+            return false;
+        if(apply) {
+            boolean state = setBlockCircuitState(worldIn, pos);
+            state = !state;
+            setBlockCircuitState(worldIn, pos, state);
+            Cell cell = Util.blockPosToCell(pos);
+            Circuit.setInpuState(cell, state);
+        }
+        return true;
     }
 }

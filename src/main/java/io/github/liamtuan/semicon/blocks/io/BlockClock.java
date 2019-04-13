@@ -5,7 +5,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class BlockClock extends BlockIO {
+public class BlockClock extends BlockOutput {
     public BlockClock() {
         setRegistryName("clock");
         setUnlocalizedName("clock");
@@ -16,8 +16,4 @@ public class BlockClock extends BlockIO {
         return null;
     }
 
-    @Override
-    public void rightClicked(World worldIn, BlockPos pos, EnumFacing handonface) {
-
-    }
 }

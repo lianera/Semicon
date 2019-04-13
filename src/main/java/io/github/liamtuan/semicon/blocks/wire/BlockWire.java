@@ -47,9 +47,4 @@ public abstract class BlockWire extends BlockUnit {
         UnitWire wire = new UnitWire(cell, dirs);
         return wire;
     }
-
-    @Override
-    public void rightClicked(World worldIn, BlockPos pos, EnumFacing handonface) {
-
-    }
 }
