@@ -1,11 +1,14 @@
 package io.github.liamtuan.semicon.sim;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import io.github.liamtuan.semicon.sim.core.Node;
 import io.github.liamtuan.semicon.sim.core.NodeStateListener;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UnitLed extends UnitOutput {
@@ -13,6 +16,25 @@ public class UnitLed extends UnitOutput {
     Node[] nodes;
     public UnitLed(Cell pos) {
         super(pos);
+        initNodeListener();
+        nodes = new Node[Dir.DIRNUM];
+        for(int i = 0; i < Dir.DIRNUM; i++) {
+            Node node = new Node();
+            nodes[i] = node;
+            node.addListener(node_listener);
+        }
+    }
+
+    public UnitLed(Cell pos, Node[] nodes){
+        super(pos);
+        initNodeListener();
+        this.nodes = nodes;
+        for(int i = 0; i < Dir.DIRNUM; i++) {
+            this.nodes[i].addListener(node_listener);
+        }
+    }
+
+    void initNodeListener(){
         node_listener = new NodeStateListener() {
             @Override
             public void onNodeStateChanged(Node node) {
@@ -21,12 +43,6 @@ public class UnitLed extends UnitOutput {
                 }
             }
         };
-        nodes = new Node[Dir.DIRNUM];
-        for(int i = 0; i < Dir.DIRNUM; i++) {
-            Node node = new Node();
-            node.addListener(node_listener);
-            nodes[i] = node;
-        }
     }
 
     @Override
@@ -61,22 +77,30 @@ public class UnitLed extends UnitOutput {
     }
 
     @Override
-    public String toString() {
-        String s = "Led{" + getPos() + ",";
-        for(Dir d : Dir.values()){
-            s += nodes[d.index()] + ",";
-        }
-        s += "}";
-        return s;
-    }
-
-    @Override
     JSONObject serializeToJson() {
         JSONObject obj = super.serializeToJson();
+        obj.put("type", "led");
         JSONArray nodes_arr = new JSONArray();
         for(Node node : nodes)
             nodes_arr.put(node.getId());
         obj.put("nodes", nodes_arr);
         return obj;
+    }
+
+
+    static UnitLed createFromJson(JSONObject obj, Map<Integer, Node> nodetable) throws InvalidArgumentException {
+        if(obj.getString("type") != "led")
+            throw new InvalidArgumentException(new String[]{"json object is not led"});
+
+        Cell pos = Cell.fromString(obj.getString("pos"));
+        JSONArray node_arr = obj.getJSONArray("nodes");
+        List<Node> nodes = new ArrayList<>();
+        for(int i = 0; i < node_arr.length(); i++){
+            int nodeid = node_arr.getInt(i);
+            Node node = nodetable.get(nodeid);
+            nodes.add(node);
+        }
+        UnitLed led = new UnitLed(pos, nodes.toArray(new Node[0]));
+        return led;
     }
 }

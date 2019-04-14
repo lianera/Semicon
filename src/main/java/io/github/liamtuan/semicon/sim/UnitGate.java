@@ -1,5 +1,6 @@
 package io.github.liamtuan.semicon.sim;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import io.github.liamtuan.semicon.sim.core.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,6 +19,14 @@ public class UnitGate extends Unit {
 
         gate = Gate.createGateFromName(gatetype.toLowerCase());
     }
+
+    public UnitGate(Cell pos, Dir[] input_faces, Dir[] output_faces, Gate gate) {
+        super(pos);
+        this.input_faces = input_faces;
+        this.output_faces = output_faces;
+        this.gate = gate;
+    }
+
 
     @Override
     void dettach() {
@@ -40,6 +49,10 @@ public class UnitGate extends Unit {
         return map;
     }
 
+    Gate getGate(){
+        return gate;
+    }
+
     @Override
     void setNodes(Map<Dir, Node> nodemap) {
         Node[] inputs = gate.getInputNodes();
@@ -58,25 +71,6 @@ public class UnitGate extends Unit {
         gate.setInputNodes(inputs);
         gate.setOutputNodes(outputs);
         gate.attach();
-    }
-
-    @Override
-    public String toString() {
-        String s = "Gate{" + gate + "," + getPos() + ",";
-        s += "input[";
-        Node[] inputs = gate.getInputNodes();
-        for(int i = 0; i < input_faces.length; i++){
-            Dir d = input_faces[i];
-            s += d + ":" + inputs[i] + ",";
-        }
-        s += "],output[";
-        Node[] outpus = gate.getOutputNodes();
-        for(int i = 0; i < output_faces.length; i++){
-            Dir d = output_faces[i];
-            s += d + ":" + outpus[i] + ",";
-        }
-        s += "]}";
-        return s;
     }
 
     public Set<Node> getInputNodes(){
@@ -103,5 +97,30 @@ public class UnitGate extends Unit {
             output_face_arr.put(d.toString());
         obj.put("output_faces", output_face_arr);
         return obj;
+    }
+
+
+    static UnitGate createFromJson(JSONObject obj, Map<Integer, Gate> gatetable) throws InvalidArgumentException {
+        if(obj.getString("type") != "gate")
+            throw new InvalidArgumentException(new String[]{"json object is not gate"});
+
+        Cell pos = Cell.fromString(obj.getString("pos"));
+        int gateid = obj.getInt("gate");
+        Gate gate = gatetable.get(gateid);
+
+        JSONArray input_face_arr = obj.getJSONArray("input_faces");
+        Dir[] input_faces = new Dir[input_face_arr.length()];
+        for(int i = 0; i < input_face_arr.length(); i++){
+            input_faces[i] = Dir.valueOf(input_face_arr.getString(i));
+        }
+
+        JSONArray output_face_arr = obj.getJSONArray("output_faces");
+        Dir[] output_faces = new Dir[output_face_arr.length()];
+        for(int i = 0; i < output_face_arr.length(); i++){
+            output_faces[i] = Dir.valueOf(output_face_arr.getString(i));
+        }
+
+        UnitGate unitgate = new UnitGate(pos, input_faces, output_faces, gate);
+        return unitgate;
     }
 }

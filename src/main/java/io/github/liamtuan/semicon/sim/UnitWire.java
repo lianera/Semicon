@@ -1,13 +1,11 @@
 package io.github.liamtuan.semicon.sim;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import io.github.liamtuan.semicon.sim.core.Node;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class UnitWire extends Unit {
     private Node[] nodes;
@@ -20,19 +18,10 @@ public class UnitWire extends Unit {
             nodes[dir.index()] = node;
     }
 
-    @Override
-    public String toString() {
-        String s =  "Wire{" + getPos() + ",";
-        for(Dir d : Dir.values()){
-            Node node = nodes[d.index()];
-            if(node == null)
-                continue;
-            s += d + "=" + node + ",";
-        }
-        s+= "}";
-        return s;
+    public UnitWire(Cell pos, Node[] nodes){
+        super(pos);
+        this.nodes = nodes;
     }
-
 
     @Override
     Map<Dir, Node> getNodes() {
@@ -70,9 +59,30 @@ public class UnitWire extends Unit {
         JSONObject obj = super.serializeToJson();
         obj.put("type", "wire");
         JSONArray nodes_arr = new JSONArray();
-        for(Node node : nodes)
-            nodes_arr.put(node.getId());
+        for(Node node : nodes) {
+            nodes_arr.put(node == null ? -1 : node.getId());
+        }
         obj.put("nodes", nodes_arr);
         return obj;
+    }
+
+
+    static UnitWire createFromJson(JSONObject obj, Map<Integer, Node> nodetable) throws InvalidArgumentException {
+        if(obj.getString("type") != "led")
+            throw new InvalidArgumentException(new String[]{"json object is not wire"});
+
+        Cell pos = Cell.fromString(obj.getString("pos"));
+        JSONArray node_arr = obj.getJSONArray("nodes");
+        Node[] nodes = new Node[Dir.values().length];
+        if(node_arr.length() != nodes.length)
+            throw new InvalidArgumentException(new String[]{"wire node num not match"});
+
+        for(int i = 0; i < node_arr.length(); i++){
+            int nodeid = node_arr.getInt(i);
+            if(nodeid >= 0)
+                nodes[i] = nodetable.get(nodeid);
+        }
+        UnitWire wire = new UnitWire(pos, nodes);
+        return wire;
     }
 }

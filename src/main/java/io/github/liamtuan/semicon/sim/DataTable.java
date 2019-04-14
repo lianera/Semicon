@@ -1,6 +1,11 @@
 package io.github.liamtuan.semicon.sim;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
+import com.sun.jna.platform.win32.WinBase;
+import io.github.liamtuan.semicon.sim.core.Gate;
 import io.github.liamtuan.semicon.sim.core.Node;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -116,5 +121,72 @@ public class DataTable {
             s += "]\n";
         }
         return s;
+    }
+
+    DataTable createFromJson(JSONObject obj) throws InvalidArgumentException {
+        Map<Integer, Gate> gatetable = new HashMap<>();
+        Map<Integer, JSONObject> gate_obj_table = new HashMap<>();
+        Map<Integer, Node> nodetable = new HashMap<>();
+
+        JSONArray gate_arr = obj.getJSONArray("gates");
+        for(int i = 0; i < gate_arr.length(); i++){
+            JSONObject gateobj = gate_arr.getJSONObject(i);
+            Gate gate = Gate.createGateFromJson(gateobj);
+            gatetable.put(gate.getId(), gate);
+            gate_obj_table.put(gate.getId(), gateobj);
+        }
+        JSONArray node_arr = obj.getJSONArray("nodes");
+        for(int i = 0; i < node_arr.length(); i++){
+            JSONObject nodeobj = node_arr.getJSONObject(i);
+            Node node = Node.createNodeFromJson(nodeobj, gatetable);
+            nodetable.put(node.getId(), node);
+        }
+        // attach gates to nodes
+        for(Gate gate : gatetable.values()){
+            JSONObject gateobj = gate_obj_table.get(gate.getId());
+            gate.attachNodesFromJson(gateobj, nodetable);
+        }
+
+        DataTable data = new DataTable();
+
+        // units
+        JSONArray unit_arr = obj.getJSONArray("units");
+        for(int i = 0; i < unit_arr.length(); i++){
+            JSONObject unitobj = unit_arr.getJSONObject(i);
+            Unit unit = Unit.createUnitFromJson(unitobj, nodetable, gatetable);
+            data.putUnit(unit.getPos(), unit);
+        }
+        return data;
+    }
+
+    JSONObject serializeToJson(){
+        JSONObject obj = new JSONObject();
+        Set<Unit> allunits = new HashSet<>(cell_unit.values());
+        Set<Node> allnodes = new HashSet<>();
+        Set<Gate> allgates = new HashSet<>();
+        for(Unit unit : allunits){
+            allnodes.addAll(unit.getNodeSet());
+            if(unit instanceof UnitGate){
+                UnitGate unitgate = (UnitGate)unit;
+                allgates.add(unitgate.getGate());
+            }
+        }
+
+        JSONArray unit_arr = new JSONArray();
+        for(Unit unit : allunits)
+            unit_arr.put(unit.serializeToJson());
+        obj.put("units", unit_arr);
+
+        JSONArray node_arr = new JSONArray();
+        for(Node node : allnodes)
+            node_arr.put(node.serializeToJson());
+        obj.put("nodes", node_arr);
+
+        JSONArray gate_arr = new JSONArray();
+        for(Gate gate : allgates)
+            gate_arr.put(gate.serializeToJson());
+        obj.put("gates", gate_arr);
+
+        return obj;
     }
 }

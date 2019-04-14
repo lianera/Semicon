@@ -62,7 +62,7 @@ public class Node {
 
     @Override
     public String toString() {
-        return "Node" + getId();
+        return serializeToJson().toString();
     }
 
     public void merge(Node node){

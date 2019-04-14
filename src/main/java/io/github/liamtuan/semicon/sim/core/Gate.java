@@ -90,6 +90,10 @@ public abstract class Gate{
         return gate;
     }
 
+    @Override
+    public String toString() {
+        return serializeToJson().toString();
+    }
 
     public JSONObject serializeToJson(){
         JSONObject obj = new JSONObject();
@@ -110,7 +114,7 @@ public abstract class Gate{
         return obj;
     }
 
-    public Gate createGateFromJson(JSONObject obj) throws InvalidArgumentException {
+    public static Gate createGateFromJson(JSONObject obj) throws InvalidArgumentException {
         if(obj.getString("type") != "gate")
             throw new InvalidArgumentException(new String[]{"json object is not gate"});
         Gate gate = createGateFromName(obj.getString("name"));
@@ -119,7 +123,7 @@ public abstract class Gate{
         return gate;
     }
 
-    public void attachNodesFromJson(Gate gate, JSONObject obj, Map<Integer, Node> nodetable) throws InvalidArgumentException {
+    public void attachNodesFromJson(JSONObject obj, Map<Integer, Node> nodetable) throws InvalidArgumentException {
         if(obj.getString("type") != "gate")
             throw new InvalidArgumentException(new String[]{"json object is not gate"});
         JSONArray innode_arr = obj.getJSONArray("input_nodes");
@@ -137,9 +141,9 @@ public abstract class Gate{
             Node node = nodetable.get(id);
             output_nodes.add(node);
         }
-        gate.setInputNodes(input_nodes.toArray(new Node[0]));
-        gate.setOutputNodes(output_nodes.toArray(new Node[0]));
-        gate.attach();
+        setInputNodes(input_nodes.toArray(new Node[0]));
+        setOutputNodes(output_nodes.toArray(new Node[0]));
+        attach();
     }
 }
 

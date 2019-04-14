@@ -2,6 +2,7 @@ package io.github.liamtuan.semicon.sim;
 
 import io.github.liamtuan.semicon.sim.core.Analyser;
 import io.github.liamtuan.semicon.sim.core.Node;
+import org.lwjgl.Sys;
 
 import static io.github.liamtuan.semicon.sim.Dir.*;
 
@@ -169,6 +170,7 @@ public class SimTest {
         if(Circuit.getOutputState(led.getPos()))
             return false;
 
+        //System.out.println(Circuit.toJson());
         return true;
     }
 

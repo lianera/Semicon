@@ -164,12 +164,12 @@ public class Circuit{
         if(debug_level >= 2){
             String s = "evaluate ";
             for(Node node : nodes)
-                s += node + "=" + node.getState() + ",";
+                s += node + ",";
             System.out.println(s);
             s = "changed output [";
             for(Cell changed : changedoutputs){
                 UnitOutput output = (UnitOutput)data.getUnit(changed);
-                s += changed + "->" + output.getState() + ",";
+                s += output + ",";
             }
             s += "]";
             System.out.println(s);
@@ -259,5 +259,11 @@ public class Circuit{
     public static  void printNodes(){
         System.out.println(data.nodeTableString());
     }
+
+    public static String toJson(){
+        return data.serializeToJson().toString();
+    }
+
+
 }
 

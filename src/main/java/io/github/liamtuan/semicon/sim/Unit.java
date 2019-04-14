@@ -1,5 +1,7 @@
 package io.github.liamtuan.semicon.sim;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
+import io.github.liamtuan.semicon.sim.core.Gate;
 import io.github.liamtuan.semicon.sim.core.Node;
 import org.json.JSONObject;
 
@@ -51,6 +53,26 @@ public abstract class Unit {
         JSONObject obj = new JSONObject();
         obj.put("pos", getPos().toString());
         return obj;
+    }
+
+    static Unit createUnitFromJson(JSONObject obj, Map<Integer,Node> nodetable, Map<Integer, Gate> gatetable) throws InvalidArgumentException {
+        String type = obj.getString("type");
+        switch (type){
+            case "gate":
+                return UnitGate.createFromJson(obj, gatetable);
+            case "led":
+                return UnitLed.createFromJson(obj, nodetable);
+            case "pin":
+                return UnitPin.createFromJson(obj, nodetable);
+            case "wire":
+                return UnitWire.createFromJson(obj, nodetable);
+        }
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return serializeToJson().toString();
     }
 }
 

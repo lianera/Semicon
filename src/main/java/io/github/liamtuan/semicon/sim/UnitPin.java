@@ -31,11 +31,6 @@ public class UnitPin extends UnitInput {
     }
 
     @Override
-    public String toString() {
-        return "Pin{" + getPos() + "," + dir + "," + state + "," + node + "}";
-    }
-
-    @Override
     void syncStateToNode() {
         node.setState(state);
     }
