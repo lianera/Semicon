@@ -25,15 +25,6 @@ public class UnitLed extends UnitOutput {
         }
     }
 
-    public UnitLed(Cell pos, Node[] nodes){
-        super(pos);
-        initNodeListener();
-        this.nodes = nodes;
-        for(int i = 0; i < Dir.DIRNUM; i++) {
-            this.nodes[i].addListener(node_listener);
-        }
-    }
-
     void initNodeListener(){
         node_listener = new NodeStateListener() {
             @Override
@@ -77,30 +68,15 @@ public class UnitLed extends UnitOutput {
     }
 
     @Override
-    JSONObject serializeToJson() {
-        JSONObject obj = super.serializeToJson();
+    JSONObject toJson() {
+        JSONObject obj = new JSONObject();
         obj.put("type", "led");
-        JSONArray nodes_arr = new JSONArray();
-        for(Node node : nodes)
-            nodes_arr.put(node.getId());
-        obj.put("nodes", nodes_arr);
+        obj.put("pos", getPos().toString());
         return obj;
     }
 
-
-    static UnitLed createFromJson(JSONObject obj, Map<Integer, Node> nodetable) throws InvalidArgumentException {
-        if(obj.getString("type") != "led")
-            throw new InvalidArgumentException(new String[]{"json object is not led"});
-
+    static UnitLed fromJson(JSONObject obj) {
         Cell pos = Cell.fromString(obj.getString("pos"));
-        JSONArray node_arr = obj.getJSONArray("nodes");
-        List<Node> nodes = new ArrayList<>();
-        for(int i = 0; i < node_arr.length(); i++){
-            int nodeid = node_arr.getInt(i);
-            Node node = nodetable.get(nodeid);
-            nodes.add(node);
-        }
-        UnitLed led = new UnitLed(pos, nodes.toArray(new Node[0]));
-        return led;
+        return new UnitLed(pos);
     }
 }

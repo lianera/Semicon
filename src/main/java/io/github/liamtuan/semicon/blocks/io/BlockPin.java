@@ -1,5 +1,6 @@
 package io.github.liamtuan.semicon.blocks.io;
 
+import io.github.liamtuan.semicon.App;
 import io.github.liamtuan.semicon.Util;
 import io.github.liamtuan.semicon.sim.*;
 import io.github.liamtuan.semicon.sim.Unit;
@@ -33,7 +34,7 @@ public class BlockPin extends BlockInput {
             state = !state;
             setBlockCircuitState(worldIn, pos, state);
             Cell cell = Util.blockPosToCell(pos);
-            Circuit.setInpuState(cell, state);
+            App.getCircuit().setInpuState(cell, state);
         }
         return true;
     }

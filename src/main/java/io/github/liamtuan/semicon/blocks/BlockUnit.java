@@ -1,6 +1,7 @@
 package io.github.liamtuan.semicon.blocks;
 
 import io.github.liamtuan.semicon.App;
+import io.github.liamtuan.semicon.AppData;
 import io.github.liamtuan.semicon.Util;
 import io.github.liamtuan.semicon.sim.*;
 import io.github.liamtuan.semicon.sim.Unit;
@@ -26,14 +27,16 @@ public abstract class BlockUnit extends BlockOriented{
     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
         super.onBlockAdded(worldIn, pos, state);
         Unit unit = createUnit(worldIn, pos);
-        Circuit.add(unit);
+        App.getCircuit().add(unit);
         App.updateOutputs(worldIn);
+
+        AppData.get(worldIn).markDirty();
     }
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         Cell cell = Util.blockPosToCell(pos);
-        Circuit.remove(cell);
+        App.getCircuit().remove(cell);
         App.updateOutputs(worldIn);
         super.breakBlock(worldIn, pos, state);
     }

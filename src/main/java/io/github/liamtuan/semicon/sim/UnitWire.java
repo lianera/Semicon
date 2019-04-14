@@ -9,18 +9,16 @@ import java.util.*;
 
 public class UnitWire extends Unit {
     private Node[] nodes;
+    private Dir[] faces;
     public UnitWire(Cell pos, Dir[] faces) {
         super(pos);
+        this.faces = faces;
+
         nodes = new Node[Dir.DIRNUM];
 
         Node node = new Node();
         for(Dir dir : faces)
             nodes[dir.index()] = node;
-    }
-
-    public UnitWire(Cell pos, Node[] nodes){
-        super(pos);
-        this.nodes = nodes;
     }
 
     @Override
@@ -55,34 +53,25 @@ public class UnitWire extends Unit {
     }
 
     @Override
-    JSONObject serializeToJson() {
-        JSONObject obj = super.serializeToJson();
+    JSONObject toJson() {
+        JSONObject obj = new JSONObject();
         obj.put("type", "wire");
-        JSONArray nodes_arr = new JSONArray();
-        for(Node node : nodes) {
-            nodes_arr.put(node == null ? -1 : node.getId());
+        obj.put("pos", getPos().toString());
+        JSONArray facearr = new JSONArray();
+        for(Dir face : faces) {
+            facearr.put(face);
         }
-        obj.put("nodes", nodes_arr);
+        obj.put("faces", facearr);
         return obj;
     }
 
-
-    static UnitWire createFromJson(JSONObject obj, Map<Integer, Node> nodetable) throws InvalidArgumentException {
-        if(obj.getString("type") != "led")
-            throw new InvalidArgumentException(new String[]{"json object is not wire"});
-
+    static UnitWire fromJson(JSONObject obj){
         Cell pos = Cell.fromString(obj.getString("pos"));
-        JSONArray node_arr = obj.getJSONArray("nodes");
-        Node[] nodes = new Node[Dir.values().length];
-        if(node_arr.length() != nodes.length)
-            throw new InvalidArgumentException(new String[]{"wire node num not match"});
-
-        for(int i = 0; i < node_arr.length(); i++){
-            int nodeid = node_arr.getInt(i);
-            if(nodeid >= 0)
-                nodes[i] = nodetable.get(nodeid);
+        JSONArray facearr = obj.getJSONArray("faces");
+        Dir[] faces = new Dir[facearr.length()];
+        for(int i = 0; i < facearr.length(); i++){
+            faces[i] = Dir.valueOf(facearr.getString(i));
         }
-        UnitWire wire = new UnitWire(pos, nodes);
-        return wire;
+        return new UnitWire(pos, faces);
     }
 }

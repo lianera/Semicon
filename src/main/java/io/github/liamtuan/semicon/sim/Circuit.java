@@ -1,42 +1,46 @@
 package io.github.liamtuan.semicon.sim;
 
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import io.github.liamtuan.semicon.sim.core.Analyser;
 import io.github.liamtuan.semicon.sim.core.Node;
 import io.github.liamtuan.semicon.sim.core.Processor;
 import io.github.liamtuan.semicon.sim.UnitInput;
 import io.github.liamtuan.semicon.sim.UnitOutput;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.*;
 
 public class Circuit{
-    private static DataTable data;
-    private static int debug_level;
-    private static StateListener output_listender;
-    private static StateListener output_cell_notifier;
-    private static Set<Cell> changedoutputs;
+    private DataTable data;
+    private int debug_level;
+    private StateListener output_listender;
+    private StateListener output_cell_notifier;
+    private Set<Cell> changedoutputs;
 
-    public static void setDebugLevel(int i){
+    public void setDebugLevel(int i){
         debug_level = i;
     }
 
-    public static void init(){
+    public Circuit(){
         data = new DataTable();
         debug_level = 0;
         changedoutputs = new HashSet<>();
         output_listender = new StateListener() {
             @Override
             public void onStateChanged(Cell cell, boolean state) {
-                Circuit.changedoutputs.add(cell);
+                changedoutputs.add(cell);
             }
         };
+        output_cell_notifier = null;
     }
 
-    public static void setOutputNotifier(StateListener notifier){
-        Circuit.output_cell_notifier = notifier;
+    public void setOutputNotifier(StateListener notifier){
+        output_cell_notifier = notifier;
     }
 
-    public static void add(Unit unit){
+    public void add(Unit unit){
         if(debug_level >= 1)
             System.out.println("add " + unit);
 
@@ -66,7 +70,7 @@ public class Circuit{
         evaluate(unit.getNodeSet());
     }
 
-    public static void remove(Cell cell){
+    public void remove(Cell cell){
         if(debug_level >= 1){
             System.out.println("remove " + data.getUnit(cell));
         }
@@ -92,7 +96,7 @@ public class Circuit{
         evaluate(changednodes);
     }
 
-    public static void setInpuState(Cell cell, boolean state){
+    public void setInpuState(Cell cell, boolean state){
         UnitInput input = (UnitInput)data.getUnit(cell);
         if(debug_level >= 1)
             System.out.println("set input state " + input + " to " + state);
@@ -101,7 +105,7 @@ public class Circuit{
         evaluate(changednodes);
     }
 
-    public static boolean getOutputState(Cell cell){
+    public boolean getOutputState(Cell cell){
         UnitOutput output = (UnitOutput)data.getUnit(cell);
         if(debug_level >= 1)
             System.out.println("get output state " + output + " " + output.getState());
@@ -109,7 +113,7 @@ public class Circuit{
     }
 
 
-    private static Node neighborNode(Cell pos, Dir dir){
+    private Node neighborNode(Cell pos, Dir dir){
         Unit unit = data.getUnit(pos);
         if(unit == null)
             return null;
@@ -123,7 +127,7 @@ public class Circuit{
         return neighbor_node;
     }
 
-    private static Set<Node> updateNodes(Set<Node> nodes){
+    private Set<Node> updateNodes(Set<Node> nodes){
         Set<Node> extendnodes = new HashSet<>();
         for(Node node : nodes) {
             node.setState(false);
@@ -145,7 +149,7 @@ public class Circuit{
         return extendnodes;
     }
 
-    private static void evaluate(Set<Node> nodes){
+    private void evaluate(Set<Node> nodes){
         changedoutputs.clear();
 
         nodes = updateNodes(nodes);
@@ -176,7 +180,7 @@ public class Circuit{
         }
     }
 
-    private static Set<Node> removeWire(UnitWire wire){
+    private Set<Node> removeWire(UnitWire wire){
         Set<Node> newnodes = new HashSet<>();
         Set<Dir> faces = wire.getFaces();
         for(Dir face : faces){
@@ -189,7 +193,7 @@ public class Circuit{
         return newnodes;
     }
 
-    private static void setWireSegNode(Joint startjoint, Node newnode){
+    private void setWireSegNode(Joint startjoint, Node newnode){
         String debugstr = "";
         if(debug_level >= 3)
             debugstr = "set wire to " + newnode + " begin at " + startjoint + " on [";
@@ -243,7 +247,7 @@ public class Circuit{
         }
     }
 
-    public static void printCircuitRoute(Set<Cell> inputs){
+    public void printCircuitRoute(Set<Cell> inputs){
         Set<Node> nodes = new HashSet<>();
         for(Cell cell : inputs){
             nodes.addAll(data.getUnit(cell).getNodeSet());
@@ -252,18 +256,33 @@ public class Circuit{
         analyser.getGraphViz(nodes.toArray(new Node[0]));
     }
 
-    public static void printSvg(){
+    public void printSvg(){
         System.out.println(data.toSvg());
     }
 
-    public static  void printNodes(){
+    public void printNodes(){
         System.out.println(data.nodeTableString());
     }
 
-    public static String toJson(){
-        return data.serializeToJson().toString();
+    public String toJson(){
+        JSONArray unitarr = new JSONArray();
+        Set<Unit> units = data.getAllUnits();
+        for(Unit unit : units){
+            unitarr.put(unit.toJson());
+        }
+        return unitarr.toString();
     }
 
+    public static Circuit fromJson(String json){
+        JSONArray unitarr = new JSONArray(json);
+        Circuit circuit = new Circuit();
 
+        for(int i = 0; i < unitarr.length(); i++){
+            JSONObject obj = unitarr.getJSONObject(i);
+            Unit unit = Unit.createUnitFromJson(obj);
+            circuit.add(unit);
+        }
+        return circuit;
+    }
 }
 

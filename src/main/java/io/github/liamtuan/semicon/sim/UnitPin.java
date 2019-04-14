@@ -1,5 +1,6 @@
 package io.github.liamtuan.semicon.sim;
 
+import com.google.gson.JsonObject;
 import com.sun.javaws.exceptions.InvalidArgumentException;
 import io.github.liamtuan.semicon.sim.core.Node;
 import org.json.JSONObject;
@@ -12,18 +13,15 @@ public class UnitPin extends UnitInput {
     Node node;
     boolean state;
 
-    public UnitPin(Cell pos, Dir dir){
+    public UnitPin(Cell pos, Dir dir, boolean state){
         super(pos);
         this.dir = dir;
         node = new Node();
         state = false;
     }
 
-    public UnitPin(Cell pos, Dir dir, Node node, boolean state){
-        super(pos);
-        this.dir = dir;
-        this.node = node;
-        this.state = state;
+    public UnitPin(Cell pos, Dir dir){
+        this(pos, dir, false);
     }
 
     Node getNode(){
@@ -56,23 +54,19 @@ public class UnitPin extends UnitInput {
     }
 
     @Override
-    JSONObject serializeToJson() {
-        JSONObject obj = super.serializeToJson();
+    JSONObject toJson() {
+        JSONObject obj = new JSONObject();
         obj.put("type", "pin");
+        obj.put("pos", getPos().toString());
         obj.put("dir", dir.toString());
-        obj.put("node", node.getId());
         obj.put("state", state);
         return obj;
     }
 
-    static UnitPin createFromJson(JSONObject obj, Map<Integer, Node> nodetable) throws InvalidArgumentException {
-        if(obj.getString("type") != "pin")
-            throw new InvalidArgumentException(new String[]{"json object is not pin"});
+    static UnitPin fromJson(JSONObject obj)  {
         Cell pos = Cell.fromString(obj.getString("pos"));
         Dir dir = Dir.valueOf(obj.getString("dir"));
-        Node node = nodetable.get(obj.getInt("node"));
         boolean state = obj.getBoolean("state");
-        UnitPin pin = new UnitPin(pos, dir, node, state);
-        return pin;
+        return new UnitPin(pos, dir, state);
     }
 }

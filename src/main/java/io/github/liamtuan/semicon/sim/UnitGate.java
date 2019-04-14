@@ -4,7 +4,6 @@ import com.sun.javaws.exceptions.InvalidArgumentException;
 import io.github.liamtuan.semicon.sim.core.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import scala.util.parsing.json.JSON;
 
 import java.util.*;
 
@@ -12,21 +11,15 @@ public class UnitGate extends Unit {
     private Gate gate;
     private Dir[] input_faces;
     private Dir[] output_faces;
+    private String gatetype;
     public UnitGate(Cell pos, Dir[] input_faces, Dir[] output_faces, String gatetype) {
         super(pos);
         this.input_faces = input_faces;
         this.output_faces = output_faces;
 
         gate = Gate.createGateFromName(gatetype.toLowerCase());
+        this.gatetype = gatetype;
     }
-
-    public UnitGate(Cell pos, Dir[] input_faces, Dir[] output_faces, Gate gate) {
-        super(pos);
-        this.input_faces = input_faces;
-        this.output_faces = output_faces;
-        this.gate = gate;
-    }
-
 
     @Override
     void dettach() {
@@ -84,10 +77,11 @@ public class UnitGate extends Unit {
     }
 
     @Override
-    JSONObject serializeToJson() {
-        JSONObject obj = super.serializeToJson();
+    JSONObject toJson() {
+        JSONObject obj = new JSONObject();
         obj.put("type", "gate");
-        obj.put("gate", gate.getId());
+        obj.put("pos", getPos().toString());
+
         JSONArray input_face_arr = new JSONArray();
         for(Dir d : input_faces)
             input_face_arr.put(d.toString());
@@ -96,17 +90,14 @@ public class UnitGate extends Unit {
         for(Dir d : output_faces)
             output_face_arr.put(d.toString());
         obj.put("output_faces", output_face_arr);
+
+        obj.put("gatetype", gatetype);
         return obj;
     }
 
 
-    static UnitGate createFromJson(JSONObject obj, Map<Integer, Gate> gatetable) throws InvalidArgumentException {
-        if(obj.getString("type") != "gate")
-            throw new InvalidArgumentException(new String[]{"json object is not gate"});
-
+    static UnitGate fromJson(JSONObject obj) {
         Cell pos = Cell.fromString(obj.getString("pos"));
-        int gateid = obj.getInt("gate");
-        Gate gate = gatetable.get(gateid);
 
         JSONArray input_face_arr = obj.getJSONArray("input_faces");
         Dir[] input_faces = new Dir[input_face_arr.length()];
@@ -120,7 +111,8 @@ public class UnitGate extends Unit {
             output_faces[i] = Dir.valueOf(output_face_arr.getString(i));
         }
 
-        UnitGate unitgate = new UnitGate(pos, input_faces, output_faces, gate);
-        return unitgate;
+        String gatetype = obj.getString("gatetype");
+
+        return new UnitGate(pos, input_faces, output_faces, gatetype);
     }
 }

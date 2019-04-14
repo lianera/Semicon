@@ -25,12 +25,15 @@ public class Cell {
 
     @Override
     public String toString() {
-        return "("+x+","+y+","+z+")";
+        return "( "+x+" , "+y+" , "+z+" )";
     }
     public static Cell fromString(String s){
         Scanner scanner = new Scanner(s);
+        scanner.next();
         int x = scanner.nextInt();
+        scanner.next();
         int y = scanner.nextInt();
+        scanner.next();
         int z = scanner.nextInt();
         return new Cell(x, y, z);
     }

@@ -49,30 +49,27 @@ public abstract class Unit {
 
     void dettach(){};
 
-    JSONObject serializeToJson(){
-        JSONObject obj = new JSONObject();
-        obj.put("pos", getPos().toString());
-        return obj;
-    }
+    abstract JSONObject toJson();
 
-    static Unit createUnitFromJson(JSONObject obj, Map<Integer,Node> nodetable, Map<Integer, Gate> gatetable) throws InvalidArgumentException {
+    static Unit createUnitFromJson(JSONObject obj) {
         String type = obj.getString("type");
         switch (type){
             case "gate":
-                return UnitGate.createFromJson(obj, gatetable);
+                return UnitGate.fromJson(obj);
             case "led":
-                return UnitLed.createFromJson(obj, nodetable);
+                return UnitLed.fromJson(obj);
             case "pin":
-                return UnitPin.createFromJson(obj, nodetable);
+                return UnitPin.fromJson(obj);
             case "wire":
-                return UnitWire.createFromJson(obj, nodetable);
+                return UnitWire.fromJson(obj);
         }
+
         return null;
     }
 
     @Override
     public String toString() {
-        return serializeToJson().toString();
+        return toJson().toString();
     }
 }
 

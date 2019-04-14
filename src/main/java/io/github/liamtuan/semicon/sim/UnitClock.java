@@ -1,6 +1,7 @@
 package io.github.liamtuan.semicon.sim;
 
 import io.github.liamtuan.semicon.sim.core.Node;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,5 +26,10 @@ public class UnitClock extends Unit {
         Node t = nodemap.get(dir);
         if(t != null)
             node = t;
+    }
+
+    @Override
+    JSONObject toJson() {
+        return null;
     }
 }
