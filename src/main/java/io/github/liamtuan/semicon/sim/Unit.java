@@ -1,11 +1,12 @@
 package io.github.liamtuan.semicon.sim;
 
 import io.github.liamtuan.semicon.sim.core.Node;
+import org.json.JSONObject;
 
 import java.util.*;
 
 public abstract class Unit {
-    private Cell pos;
+    Cell pos;
     Unit(Cell pos){
         this.pos = pos;
     }
@@ -45,6 +46,12 @@ public abstract class Unit {
     }
 
     void dettach(){};
+
+    JSONObject serializeToJson(){
+        JSONObject obj = new JSONObject();
+        obj.put("pos", getPos().toString());
+        return obj;
+    }
 }
 
 abstract class UnitIO extends Unit{

@@ -1,6 +1,8 @@
 package io.github.liamtuan.semicon.sim;
 
 import io.github.liamtuan.semicon.sim.core.Node;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,5 +63,16 @@ public class UnitWire extends Unit {
                 result.add(d);
         }
         return result;
+    }
+
+    @Override
+    JSONObject serializeToJson() {
+        JSONObject obj = super.serializeToJson();
+        obj.put("type", "wire");
+        JSONArray nodes_arr = new JSONArray();
+        for(Node node : nodes)
+            nodes_arr.put(node.getId());
+        obj.put("nodes", nodes_arr);
+        return obj;
     }
 }

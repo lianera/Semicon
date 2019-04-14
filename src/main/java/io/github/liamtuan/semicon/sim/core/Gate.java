@@ -1,6 +1,15 @@
 package io.github.liamtuan.semicon.sim.core;
 
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.omg.CORBA.PUBLIC_MEMBER;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public abstract class Gate{
     public abstract Node[] getInputNodes();
     public abstract Node[] getOutputNodes();
@@ -15,6 +24,8 @@ public abstract class Gate{
         id = ID_;
         ID_ ++;
     }
+
+    abstract public String getName();
 
     public int getId(){
         return id;
@@ -61,6 +72,74 @@ public abstract class Gate{
             }
         }
         setOutputNodes(outputs);
+    }
+
+    public static Gate createGateFromName(String name){
+        Gate gate = null;
+        switch (name){
+            case "and":
+                gate =  new AndGate();
+                break;
+            case "or":
+                gate = new OrGate();
+                break;
+            case "not":
+                gate = new NotGate();
+                break;
+        }
+        return gate;
+    }
+
+
+    public JSONObject serializeToJson(){
+        JSONObject obj = new JSONObject();
+        obj.put("type", "node");
+        obj.put("id", getId());
+        obj.put("name", getName());
+        JSONArray innode_arr = new JSONArray();
+        for(Node node : getInputNodes()){
+            innode_arr.put(node.getId());
+        }
+        obj.put("input_nodes", innode_arr);
+
+        JSONArray outnode_arr = new JSONArray();
+        for(Node node : getOutputNodes()){
+            outnode_arr.put(node.getId());
+        }
+        obj.put("output_nodes", outnode_arr);
+        return obj;
+    }
+
+    public Gate createGateFromJson(JSONObject obj) throws InvalidArgumentException {
+        if(obj.getString("type") != "gate")
+            throw new InvalidArgumentException(new String[]{"json object is not gate"});
+        Gate gate = createGateFromName(obj.getString("name"));
+        gate.id = obj.getInt("id");
+        ID_ = gate.id+1;
+        return gate;
+    }
+
+    public void attachNodesFromJson(Gate gate, JSONObject obj, Map<Integer, Node> nodetable) throws InvalidArgumentException {
+        if(obj.getString("type") != "gate")
+            throw new InvalidArgumentException(new String[]{"json object is not gate"});
+        JSONArray innode_arr = obj.getJSONArray("input_nodes");
+        List<Node> input_nodes = new ArrayList<>();
+        for(int i = 0; i < innode_arr.length(); i++){
+            int id = innode_arr.getInt(i);
+            Node node = nodetable.get(id);
+            input_nodes.add(node);
+        }
+
+        JSONArray output_arr = obj.getJSONArray("output_nodes");
+        List<Node> output_nodes = new ArrayList<>();
+        for(int i = 0; i < output_arr.length(); i++){
+            int id = output_arr.getInt(i);
+            Node node = nodetable.get(id);
+            output_nodes.add(node);
+        }
+        gate.setInputNodes(input_nodes.toArray(new Node[0]));
+        gate.setOutputNodes(output_nodes.toArray(new Node[0]));
+        gate.attach();
     }
 }
 

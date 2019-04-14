@@ -1,8 +1,11 @@
 package io.github.liamtuan.semicon.sim.core;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
+import org.json.*;
+
 import java.util.*;
 
-public class Node{
+public class Node {
     private boolean state;
     Set<Gate> ingates;
     Set<Gate> outgates;
@@ -88,5 +91,46 @@ public class Node{
         listeners.addAll(node.listeners);
         if(node.state)
             this.state = true;
+    }
+
+    public JSONObject serializeToJson(){
+        JSONObject obj = new JSONObject();
+        obj.put("type", "node");
+        obj.put("id", id);
+        obj.put("state", state);
+        JSONArray ingate_arr = new JSONArray();
+        for(Gate gate : ingates){
+            ingate_arr.put(gate.getId());
+        }
+        obj.put("ingates", ingate_arr);
+
+        JSONArray outgate_arr = new JSONArray();
+        for(Gate gate : outgates){
+            outgate_arr.put(gate.getId());
+        }
+        obj.put("outgates", outgate_arr);
+        return obj;
+    }
+
+    public static Node createNodeFromJson(JSONObject obj, Map<Integer, Gate> gatetable) throws InvalidArgumentException {
+        if(obj.getString("type") != "node")
+            throw new InvalidArgumentException(new String[]{"json object is not node"});
+        Node node = new Node();
+        node.id = obj.getInt("id");
+        ID_ = node.id+1;
+        node.state = obj.getBoolean("state");
+        JSONArray ingate_arr = obj.getJSONArray("ingates");
+        for(int i = 0; i < ingate_arr.length(); i++){
+            int id = ingate_arr.getInt(i);
+            Gate gate = gatetable.get(id);
+            node.ingates.add(gate);
+        }
+        JSONArray outgate_arr = obj.getJSONArray("outgates");
+        for(int i = 0; i < outgate_arr.length(); i++){
+            int id = outgate_arr.getInt(i);
+            Gate gate = gatetable.get(id);
+            node.outgates.add(gate);
+        }
+        return node;
     }
 }

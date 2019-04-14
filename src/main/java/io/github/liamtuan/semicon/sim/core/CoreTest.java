@@ -26,7 +26,11 @@ public class CoreTest {
         Node y = new Node();
 
         // and gate
-        Gate and = new AndGate(x1, x2, y);
+        Gate and = new AndGate();
+        and.setInputNodes(new Node[]{x1, x2});
+        and.setOutputNodes(new Node[]{y});
+        and.attach();
+
         Node[] nodes = new Node[]{x1, x2, y};
         Node[] events = new Node[]{x1, x2, y};
         int[] expect = new int[]{0, 0, 0};
@@ -58,7 +62,11 @@ public class CoreTest {
         and.dettach();
 
         // or gate
-        Gate or = new OrGate(x1, x2, y);
+        Gate or = new OrGate();
+        or.setInputNodes(new Node[]{x1, x2});
+        or.setOutputNodes(new Node[]{y});
+        or.attach();
+
         x1.setState(false);
         x2.setState(false);
         y.setState(false);
@@ -92,7 +100,11 @@ public class CoreTest {
         or.dettach();
 
         // not gate
-        Gate not = new NotGate(x1, y);
+        Gate not = new NotGate();
+        not.setInputNodes(new Node[]{x1});
+        not.setOutputNodes(new Node[]{y});
+        not.attach();
+
         x1.setState(false);
         y.setState(false);
         nodes = new Node[]{x1, y};
@@ -119,8 +131,16 @@ public class CoreTest {
         Node B = new Node();
         Node C = new Node();
         Node Q = new Node();
-        Gate G1 = new NotGate(B, C);
-        Gate G2 = new AndGate(A, C, Q);
+        Gate G1 = new NotGate();
+        G1.setInputNodes(new Node[]{B});
+        G1.setOutputNodes(new Node[]{C});
+        G1.attach();
+
+        Gate G2 = new AndGate();
+        G2.setInputNodes(new Node[]{A, C});
+        G2.setOutputNodes(new Node[]{Q});
+        G2.attach();
+
         Node[] nodes = new Node[]{A, B, C, Q};
         p.eval(nodes);
         int[] expect = new int[]{0, 0, 1, 0};
@@ -141,7 +161,11 @@ public class CoreTest {
     {
         Processor p = new Processor();
         Node x = new Node();
-        Gate not = new NotGate(x, x);
+        Gate not = new NotGate();
+        not.setInputNodes(new Node[]{x});
+        not.setOutputNodes(new Node[]{x});
+        not.attach();
+
         Node[] nodes = new Node[]{x};
         p.eval(nodes);
         return true;
@@ -155,10 +179,26 @@ public class CoreTest {
         Node QB = new Node();
         Node t1 = new Node();
         Node t2 = new Node();
-        Gate G1 = new AndGate(R, QB, t1);
-        Gate G2 = new AndGate(S, Q, t2);
-        Gate N1 = new NotGate(t1, Q);
-        Gate N2 = new NotGate(t2, QB);
+        Gate G1 = new AndGate();
+        G1.setInputNodes(new Node[]{R, QB});
+        G1.setOutputNodes(new Node[]{t1});
+        G1.attach();
+
+        Gate G2 = new AndGate();
+        G2.setInputNodes(new Node[]{S, Q});
+        G2.setOutputNodes(new Node[]{t2});
+        G2.attach();
+
+        Gate N1 = new NotGate();
+        N1.setInputNodes(new Node[]{t1});
+        N1.setOutputNodes(new Node[]{Q});
+        N1.attach();
+
+        Gate N2 = new NotGate();
+        N2.setInputNodes(new Node[]{t2});
+        N2.setOutputNodes(new Node[]{QB});
+        N2.attach();
+
         Node[] nodes = new Node[]{R, S, Q, QB, t1, t2};
         Node[] events = nodes;
         R.setState(true);
@@ -193,8 +233,16 @@ public class CoreTest {
         Node B = new Node();
         Node C = new Node();
         Node D = new Node();
-        Gate not = new NotGate(A, B);
-        Gate and = new AndGate(B, C, D);
+        Gate not = new NotGate();
+        not.setInputNodes(new Node[]{A});
+        not.setOutputNodes(new Node[]{B});
+        not.attach();
+
+        Gate and = new AndGate();
+        and.setInputNodes(new Node[]{B, C});
+        and.setOutputNodes(new Node[]{D});
+        and.attach();
+
         Node[] nodes = new Node[]{A, B, C, D};
         Node[] events = nodes;
         C.setState(true);
@@ -207,7 +255,11 @@ public class CoreTest {
         Node E = new Node();
         Node F = new Node();
         Node G = new Node();
-        Gate or = new OrGate(E, F, G);
+        Gate or = new OrGate();
+        or.setInputNodes(new Node[]{E, F});
+        or.setOutputNodes(new Node[]{G});
+        or.attach();
+
         nodes = new Node[]{E, F, G};
         events = nodes;
         p.eval(events);
@@ -238,7 +290,10 @@ public class CoreTest {
             Node x = y;
             y = new Node();
             nodes.add(y);
-            Gate notgate = new NotGate(x, y);
+            Gate notgate = new NotGate();
+            notgate.setInputNodes(new Node[]{x});
+            notgate.setOutputNodes(new Node[]{y});
+            notgate.attach();
             expect = !expect;
         }
         p.eval(nodes.toArray(new Node[0]));

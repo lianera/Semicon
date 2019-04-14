@@ -3,11 +3,11 @@ package io.github.liamtuan.semicon.sim.core;
 public abstract class X2Y1Gate extends Gate{
     Node x1, x2;
     Node y;
-    public X2Y1Gate(Node x1, Node x2, Node y)
+    public X2Y1Gate()
     {
-        this.x1 = x1;
-        this.x2 = x2;
-        this.y = y;
+        this.x1 = new Node();
+        this.x2 = new Node();
+        this.y = new Node();
         super.attach();
     }
 

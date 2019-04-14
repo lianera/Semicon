@@ -1,6 +1,9 @@
 package io.github.liamtuan.semicon.sim;
 
 import io.github.liamtuan.semicon.sim.core.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import scala.util.parsing.json.JSON;
 
 import java.util.*;
 
@@ -13,24 +16,15 @@ public class UnitGate extends Unit {
         this.input_faces = input_faces;
         this.output_faces = output_faces;
 
-        switch (gatetype.toLowerCase()){
-            case "and":
-                gate = new AndGate(new Node(), new Node(), new Node());
-                break;
-            case "or":
-                gate = new OrGate(new Node(), new Node(), new Node());
-                break;
-            case "not":
-                gate = new NotGate(new Node(), new Node());
-            default:
-                assert false;
-        }
+        gate = Gate.createGateFromName(gatetype.toLowerCase());
     }
 
     @Override
     void dettach() {
         gate.dettach();
     }
+
+
 
     @Override
     Map<Dir, Node> getNodes() {
@@ -93,5 +87,21 @@ public class UnitGate extends Unit {
     public Set<Node> getOutputNodes(){
         Set<Node> nodes = new HashSet<>(Arrays.asList(gate.getOutputNodes()));
         return nodes;
+    }
+
+    @Override
+    JSONObject serializeToJson() {
+        JSONObject obj = super.serializeToJson();
+        obj.put("type", "gate");
+        obj.put("gate", gate.getId());
+        JSONArray input_face_arr = new JSONArray();
+        for(Dir d : input_faces)
+            input_face_arr.put(d.toString());
+        obj.put("input_faces", input_face_arr);
+        JSONArray output_face_arr = new JSONArray();
+        for(Dir d : output_faces)
+            output_face_arr.put(d.toString());
+        obj.put("output_faces", output_face_arr);
+        return obj;
     }
 }

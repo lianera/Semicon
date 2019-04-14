@@ -2,6 +2,8 @@ package io.github.liamtuan.semicon.sim;
 
 import io.github.liamtuan.semicon.sim.core.Node;
 import io.github.liamtuan.semicon.sim.core.NodeStateListener;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,5 +68,15 @@ public class UnitLed extends UnitOutput {
         }
         s += "}";
         return s;
+    }
+
+    @Override
+    JSONObject serializeToJson() {
+        JSONObject obj = super.serializeToJson();
+        JSONArray nodes_arr = new JSONArray();
+        for(Node node : nodes)
+            nodes_arr.put(node.getId());
+        obj.put("nodes", nodes_arr);
+        return obj;
     }
 }

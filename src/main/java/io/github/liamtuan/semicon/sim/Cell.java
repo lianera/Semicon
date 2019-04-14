@@ -1,5 +1,9 @@
 package io.github.liamtuan.semicon.sim;
 
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.util.Scanner;
+
 public class Cell {
     public int x, y, z;
     public Cell(int x, int y, int z){
@@ -22,5 +26,12 @@ public class Cell {
     @Override
     public String toString() {
         return "("+x+","+y+","+z+")";
+    }
+    public static Cell fromString(String s){
+        Scanner scanner = new Scanner(s);
+        int x = scanner.nextInt();
+        int y = scanner.nextInt();
+        int z = scanner.nextInt();
+        return new Cell(x, y, z);
     }
 }
