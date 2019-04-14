@@ -1,12 +1,8 @@
 package io.github.liamtuan.semicon.sim;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import io.github.liamtuan.semicon.sim.core.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class UnitGate extends Unit {
     private Gate gate;
@@ -71,11 +67,6 @@ public class UnitGate extends Unit {
     }
 
     @Override
-    void update() {
-        gate.evel();
-    }
-
-    @Override
     public String toString() {
         String s = "Gate{" + gate + "," + getPos() + ",";
         s += "input[";
@@ -94,4 +85,13 @@ public class UnitGate extends Unit {
         return s;
     }
 
+    public Set<Node> getInputNodes(){
+        Set<Node> nodes = new HashSet<>(Arrays.asList(gate.getInputNodes()));
+        return nodes;
+    }
+
+    public Set<Node> getOutputNodes(){
+        Set<Node> nodes = new HashSet<>(Arrays.asList(gate.getOutputNodes()));
+        return nodes;
+    }
 }

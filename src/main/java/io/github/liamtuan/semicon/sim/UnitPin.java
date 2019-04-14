@@ -27,6 +27,11 @@ public class UnitPin extends UnitInput {
     }
 
     @Override
+    void syncStateToNode() {
+        node.setState(state);
+    }
+
+    @Override
     void setState(boolean state) {
         this.state = state;
         node.setState(state);
@@ -46,8 +51,4 @@ public class UnitPin extends UnitInput {
             node = t;
     }
 
-    @Override
-    void update() {
-        node.setState(state);
-    }
 }

@@ -1,5 +1,8 @@
 package io.github.liamtuan.semicon.sim.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CoreTest {
 
     public void testAll(){
@@ -12,6 +15,8 @@ public class CoreTest {
             System.out.println("sr latch test failed");
         if(!MergeTest())
             System.out.println("node merge test failed");
+        if(!stackedTest())
+            System.out.println("stacked test failed");
     }
 
     boolean gateTest(){
@@ -218,6 +223,27 @@ public class CoreTest {
         if(!compareStates(nodes, expect))
             return false;
 
+        return true;
+    }
+
+    boolean stackedTest(){
+        Processor p = new Processor();
+
+        Node in = new Node();
+        Node y = in;
+        List<Node> nodes = new ArrayList<>();
+        nodes.add(in);
+        boolean expect = false;
+        for(int i = 0; i < 100; i++){
+            Node x = y;
+            y = new Node();
+            nodes.add(y);
+            Gate notgate = new NotGate(x, y);
+            expect = !expect;
+        }
+        p.eval(nodes.toArray(new Node[0]));
+        if(y.getState() != expect)
+            return false;
         return true;
     }
 

@@ -4,7 +4,6 @@ import io.github.liamtuan.semicon.Util;
 import io.github.liamtuan.semicon.sim.Cell;
 import io.github.liamtuan.semicon.sim.UnitLed;
 import io.github.liamtuan.semicon.sim.Unit;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 

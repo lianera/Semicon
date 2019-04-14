@@ -98,4 +98,23 @@ public class DataTable {
                 node_cells.remove(node);
         }
     }
+
+    public String toSvg(){
+        Visualizer visualizer = new Visualizer(100, 100);
+        return visualizer.toSvg(cell_unit);
+    }
+
+    public String nodeTableString(){
+        String s = "";
+        for(Map.Entry<Node, Set<Cell>> entry : node_cells.entrySet()){
+            Node node = entry.getKey();
+            s += node + ":" + node.getState() + "[";
+            Set<Cell> cells = entry.getValue();
+            for(Cell cell : cells){
+                s += cell + ",";
+            }
+            s += "]\n";
+        }
+        return s;
+    }
 }

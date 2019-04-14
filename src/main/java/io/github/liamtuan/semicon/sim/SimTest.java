@@ -1,5 +1,8 @@
 package io.github.liamtuan.semicon.sim;
 
+import io.github.liamtuan.semicon.sim.core.Analyser;
+import io.github.liamtuan.semicon.sim.core.Node;
+
 import static io.github.liamtuan.semicon.sim.Dir.*;
 
 public class SimTest {
@@ -17,6 +20,8 @@ public class SimTest {
             System.out.println("wire loop test failed");
         if(!gateLoopTest())
             System.out.println("gate loop test failed");
+        if(!stackedNotGateTest())
+            System.out.println("stacked not gate test failed");
     }
 
     private boolean ioTest(){
@@ -160,8 +165,36 @@ public class SimTest {
             return false;
 
         Circuit.setInpuState(pin.getPos(), true);
+
         if(Circuit.getOutputState(led.getPos()))
             return false;
+
+        return true;
+    }
+
+    private boolean stackedNotGateTest(){
+        Circuit.init();
+        //Circuit.setDebugLevel(5);
+        UnitLed led = new UnitLed(new Cell(0, 0, -1));
+        Circuit.add(led);
+        boolean expect = false;
+        UnitGate notgate = null;
+        for(int i = 0; i < 4; i++){
+            notgate = new UnitGate(new Cell(0, 0, i), new Dir[]{POSZ}, new Dir[]{NEGZ}, "not");
+            Circuit.add(notgate);
+            expect = !expect;
+            if(Circuit.getOutputState(led.getPos()) != expect) {
+                Analyser analyser = new Analyser();
+                System.out.println("failed at " + i);
+                Node[] inputs = notgate.getInputNodes().toArray(new Node[0]);
+                System.out.println(analyser.getGraphViz(inputs));
+                Circuit.printNodes();
+                return false;
+            }
+        }
+
+
+        //Circuit.printSvg();
 
         return true;
     }

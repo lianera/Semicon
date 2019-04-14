@@ -44,7 +44,6 @@ public abstract class Unit {
         return getNodes().keySet();
     }
 
-    void update(){};
     void dettach(){};
 }
 
@@ -60,6 +59,7 @@ abstract class UnitInput extends UnitIO{
         super(pos);
     }
 
+    abstract void syncStateToNode();
     abstract void setState(boolean state);
 }
 

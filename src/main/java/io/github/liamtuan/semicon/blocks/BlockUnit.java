@@ -3,6 +3,7 @@ package io.github.liamtuan.semicon.blocks;
 import io.github.liamtuan.semicon.App;
 import io.github.liamtuan.semicon.Util;
 import io.github.liamtuan.semicon.sim.*;
+import io.github.liamtuan.semicon.sim.Unit;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;

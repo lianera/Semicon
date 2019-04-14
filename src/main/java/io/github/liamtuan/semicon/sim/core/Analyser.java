@@ -17,7 +17,7 @@ public class Analyser {
             for(Gate gate : node.outgates){
                 for(Node next : gate.getOutputNodes()) {
                     open.push(next);
-                    s += node + " -> " + next + "\n";
+                    s += node + " -> " + next + "[label=" + gate + "]\n";
                 }
             }
         }

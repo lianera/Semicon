@@ -3,10 +3,9 @@ package io.github.liamtuan.semicon.sim;
 
 import io.github.liamtuan.semicon.sim.core.Analyser;
 import io.github.liamtuan.semicon.sim.core.Node;
-import io.github.liamtuan.semicon.sim.core.NodeStateListener;
 import io.github.liamtuan.semicon.sim.core.Processor;
-import org.apache.http.impl.conn.Wire;
-import org.lwjgl.Sys;
+import io.github.liamtuan.semicon.sim.UnitInput;
+import io.github.liamtuan.semicon.sim.UnitOutput;
 
 import java.util.*;
 
@@ -124,26 +123,32 @@ public class Circuit{
         return neighbor_node;
     }
 
-    private static void updateNodes(Set<Node> nodes){
+    private static Set<Node> updateNodes(Set<Node> nodes){
+        Set<Node> extendnodes = new HashSet<>();
         for(Node node : nodes) {
             node.setState(false);
             Set<Unit> units = data.getNodeUnits(node);
-            for(Unit unit : units)
-                unit.update();
+            for(Unit unit : units){
+                if(unit instanceof UnitInput){
+                    // if node linked to input unit, sync input state to node
+                    ((UnitInput)unit).syncStateToNode();
+                }else if(unit instanceof UnitGate){
+                    // if node linked to gate output, add gate input to evaluate queue
+                    UnitGate gate = (UnitGate)unit;
+                    if(gate.getOutputNodes().contains(node))
+                        extendnodes.addAll(gate.getInputNodes());
+                }
+            }
+            extendnodes.add(node);
             node.invokeListener();
         }
-        if(debug_level >= 2){
-            String s = "update ";
-            for(Node node : nodes)
-                s += node + "=" + node.getState() + ",";
-            System.out.println(s);
-        }
+        return extendnodes;
     }
 
     private static void evaluate(Set<Node> nodes){
         changedoutputs.clear();
 
-        updateNodes(nodes);
+        nodes = updateNodes(nodes);
 
         Node[] nodearr = nodes.toArray(new Node[0]);
         Processor p = new Processor();
@@ -168,7 +173,6 @@ public class Circuit{
             }
             s += "]";
             System.out.println(s);
-
         }
     }
 
@@ -237,6 +241,23 @@ public class Circuit{
             debugstr += "]";
             System.out.println(debugstr);
         }
+    }
+
+    public static void printCircuitRoute(Set<Cell> inputs){
+        Set<Node> nodes = new HashSet<>();
+        for(Cell cell : inputs){
+            nodes.addAll(data.getUnit(cell).getNodeSet());
+        }
+        Analyser analyser = new Analyser();
+        analyser.getGraphViz(nodes.toArray(new Node[0]));
+    }
+
+    public static void printSvg(){
+        System.out.println(data.toSvg());
+    }
+
+    public static  void printNodes(){
+        System.out.println(data.nodeTableString());
     }
 }
 
