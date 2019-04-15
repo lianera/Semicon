@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "down": "semicon:blocks/srlatch",
+        "up": "semicon:blocks/srlatch",
+        "north": "semicon:blocks/q_port",
+        "east": "semicon:blocks/r_port",
+        "south": "semicon:blocks/s_port",
+        "west": "semicon:blocks/qbar_port",
+        "particle": "semicon:blocks/srlatch"
+    }
+}

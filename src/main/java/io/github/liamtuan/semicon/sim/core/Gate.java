@@ -77,6 +77,11 @@ public abstract class Gate{
             case "not":
                 gate = new NotGate();
                 break;
+            case "xor":
+                gate = new XorGate();
+                break;
+            case "srlatch":
+                gate = new SrLatchGate();
         }
         return gate;
     }

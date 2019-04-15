@@ -29,6 +29,8 @@ public class SimTest {
             System.out.println("clock test failed");
         if(!performanceTest())
             System.out.println("performance test failed");
+        if(!latchTest())
+            System.out.println("circuit latch test failed");
     }
 
     private boolean ioTest(){
@@ -254,4 +256,31 @@ public class SimTest {
         return true;
     }
 
+    private boolean latchTest(){
+        Circuit circuit = new Circuit();
+        UnitGate srlatch = new UnitGate(new Cell(0, 0, 0), new Dir[]{POSZ, POSX}, new Dir[]{NEGZ, NEGX}, "srlatch");
+        circuit.add(srlatch);
+        UnitLed q = new UnitLed(new Cell(0, 0, -1));
+        UnitLed qbar = new UnitLed(new Cell(-1, 0, 0));
+        UnitPin s = new UnitPin(new Cell(0, 0, 1), NEGZ);
+        UnitPin r = new UnitPin(new Cell(1, 0, 0), NEGX);
+        circuit.add(q);
+        circuit.add(qbar);
+        circuit.add(s);
+        circuit.add(r);
+
+        circuit.setInpuState(s.getPos(), true);
+        if(!circuit.getOutputState(q.getPos()) || circuit.getOutputState(qbar.getPos()))
+            return false;
+
+        circuit.setInpuState(s.getPos(), false);
+        if(!circuit.getOutputState(q.getPos()) || circuit.getOutputState(qbar.getPos()))
+            return false;
+
+        circuit.setInpuState(r.getPos(), true);
+        if(circuit.getOutputState(q.getPos()) || !circuit.getOutputState(qbar.getPos()))
+            return false;
+
+        return true;
+    }
 }

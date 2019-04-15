@@ -17,6 +17,8 @@ public class CoreTest {
             System.out.println("node merge test failed");
         if(!stackedTest())
             System.out.println("stacked test failed");
+        if(!latchTest())
+            System.out.println("latch test failed");
     }
 
     boolean gateTest(){
@@ -99,6 +101,45 @@ public class CoreTest {
 
         or.dettach();
 
+
+        // xor gate
+        Gate xor = new XorGate();
+        xor.setInputNodes(new Node[]{x1, x2});
+        xor.setOutputNodes(new Node[]{y});
+        xor.attach();
+
+        x1.setState(false);
+        x2.setState(false);
+        y.setState(false);
+        events = new Node[]{x1, x2, y};
+        expect = new int[]{0, 0, 0};
+        p.eval(events);
+        if(!compareStates(nodes, expect))
+            return false;
+
+        x1.setState(true);
+        events = new Node[]{x1};
+        p.eval(events);
+        expect = new int[]{1, 0, 1};
+        if(!compareStates(nodes, expect))
+            return false;
+
+        x2.setState(true);
+        events = new Node[]{x2};
+        p.eval(events);
+        expect = new int[]{1, 1, 0};
+        if(!compareStates(nodes, expect))
+            return false;
+
+        x1.setState(false);
+        events = new Node[]{x1};
+        p.eval(events);
+        expect = new int[]{0, 1, 1};
+        if(!compareStates(nodes, expect))
+            return false;
+
+        xor.dettach();
+
         // not gate
         Gate not = new NotGate();
         not.setInputNodes(new Node[]{x1});
@@ -119,6 +160,36 @@ public class CoreTest {
         expect = new int[]{1, 0};
         p.eval(events);
         if(!compareStates(nodes, expect))
+            return false;
+
+        return true;
+    }
+
+    boolean latchTest(){
+        Processor p = new Processor();
+        Node s = new Node();
+        Node r = new Node();
+        Node q = new Node();
+        Node qbar = new Node();
+        SrLatchGate srlatch = new SrLatchGate();
+        srlatch.setInputNodes(new Node[]{s, r});
+        srlatch.setOutputNodes(new Node[]{q, qbar});
+        srlatch.attach();
+
+        s.setState(true);
+        Node[] events = new Node[]{s, r, q, qbar};
+        p.eval(events);
+        if(!compareStates(events, new int[]{1, 0, 1, 0}))
+            return false;
+
+        s.setState(false);
+        p.eval(events);
+        if(!compareStates(events, new int[]{0, 0, 1, 0}))
+            return false;
+
+        r.setState(true);
+        p.eval(events);
+        if(!compareStates(events, new int[]{0, 1, 0, 1}))
             return false;
 
         return true;
