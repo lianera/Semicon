@@ -5,6 +5,7 @@ import io.github.liamtuan.semicon.AppData;
 import io.github.liamtuan.semicon.Util;
 import io.github.liamtuan.semicon.sim.*;
 import io.github.liamtuan.semicon.sim.Unit;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,8 +14,11 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public abstract class BlockUnit extends BlockOriented{
-    public BlockUnit(Material material) {
+public abstract class BlockUnit extends Block {
+    public BlockUnit() {
+        super(Material.IRON);
+    }
+    public BlockUnit(Material material){
         super(material);
     }
 

@@ -5,24 +5,17 @@ import io.github.liamtuan.semicon.sim.Cell;
 import io.github.liamtuan.semicon.sim.Circuit;
 import io.github.liamtuan.semicon.sim.StateListener;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 
 @Mod(modid = App.MODID)
@@ -75,7 +68,7 @@ public class App {
             Block block = world.getBlockState(pos).getBlock();
             if(block instanceof BlockOutput){
                 BlockOutput output = (BlockOutput)block;
-                output.setBlockCircuitState(world, pos, state);
+                output.setState(world, pos, state);
             }
         }
         output_changed.clear();

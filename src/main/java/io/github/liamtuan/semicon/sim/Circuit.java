@@ -119,6 +119,13 @@ public class Circuit{
         return output.getState();
     }
 
+    public void setClockFrequency(Cell cell, float frequency){
+        UnitClock clock = (UnitClock) data.getUnit(cell);
+        if(debug_level >= 1)
+            System.out.println("set clock " + clock + " frequency to " + frequency);
+        clock.setFrequency(frequency);
+    }
+
     public void update(float dt){
         for(Cell c : clockes){
             UnitClock clock  = (UnitClock)data.getUnit(c);
