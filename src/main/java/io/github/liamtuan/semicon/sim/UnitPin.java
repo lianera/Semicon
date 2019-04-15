@@ -17,7 +17,7 @@ public class UnitPin extends UnitInput {
         super(pos);
         this.dir = dir;
         node = new Node();
-        state = false;
+        this.state = state;
     }
 
     public UnitPin(Cell pos, Dir dir){

@@ -1,5 +1,7 @@
 package io.github.liamtuan.semicon.sim;
 
+import io.github.liamtuan.semicon.App;
+import io.github.liamtuan.semicon.AppData;
 import io.github.liamtuan.semicon.sim.core.Analyser;
 import io.github.liamtuan.semicon.sim.core.Node;
 import org.lwjgl.Sys;
@@ -23,17 +25,21 @@ public class SimTest {
             System.out.println("gate loop test failed");
         if(!stackedNotGateTest())
             System.out.println("stacked not gate test failed");
+        if(!clockTest())
+            System.out.println("clock test failed");
+        if(!performanceTest())
+            System.out.println("performance test failed");
     }
 
     private boolean ioTest(){
         Circuit circuit = new Circuit();
         //circuit.setDebugLevel(5);
-        UnitPin pin = new UnitPin(new Cell(0,0, 0), Dir.NEGZ);
-        circuit.add(new UnitPin(new Cell(0,0, 0), Dir.NEGZ));
+        UnitPin pin = new UnitPin(new Cell(0,0, 0), Dir.NEGZ, true);
+        circuit.add(pin);
         UnitLed led = new UnitLed(new Cell(0, 0, -1));
         circuit.add(led);
 
-        circuit.setInpuState(pin.getPos(), true);
+        //circuit.setInpuState(pin.getPos(), true);
         if(!circuit.getOutputState(led.getPos()))
             return false;
 
@@ -212,4 +218,40 @@ public class SimTest {
 
         return true;
     }
+
+
+    boolean performanceTest(){
+        Circuit circuit = new Circuit();
+        for(int x = 0; x < 10; x++){
+            for(int y = 0; y < 10; y++) {
+                for (int z = 0; z < 10; z++) {
+                    Unit gate = new UnitGate(new Cell(x, y, z), new Dir[]{NEGZ}, new Dir[]{POSZ}, "not");
+                    circuit.add(gate);
+                }
+            }
+        }
+        return true;
+    }
+
+
+    private boolean clockTest(){
+        Circuit circuit = new Circuit();
+        //circuit.setDebugLevel(5);
+        UnitClock clock = new UnitClock(new Cell(0,0, 0), Dir.NEGZ, 1.f);
+        circuit.add(clock);
+        UnitLed led = new UnitLed(new Cell(0, 0, -1));
+        circuit.add(led);
+
+        circuit.update(0.5f);
+        //circuit.setInpuState(pin.getPos(), true);
+        if(!circuit.getOutputState(led.getPos()))
+            return false;
+
+        circuit.update(0.5f);
+        if(circuit.getOutputState(led.getPos()))
+            return false;
+
+        return true;
+    }
+
 }

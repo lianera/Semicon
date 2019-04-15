@@ -62,6 +62,8 @@ public abstract class Unit {
                 return UnitPin.fromJson(obj);
             case "wire":
                 return UnitWire.fromJson(obj);
+            case "clock":
+                return UnitClock.fromJson(obj);
         }
 
         return null;

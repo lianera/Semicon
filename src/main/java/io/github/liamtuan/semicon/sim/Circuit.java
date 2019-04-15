@@ -18,6 +18,7 @@ public class Circuit{
     private StateListener output_listender;
     private StateListener output_cell_notifier;
     private Set<Cell> changedoutputs;
+    private Set<Cell> clockes;
 
     public void setDebugLevel(int i){
         debug_level = i;
@@ -34,6 +35,7 @@ public class Circuit{
             }
         };
         output_cell_notifier = null;
+        clockes = new HashSet<>();
     }
 
     public void setOutputNotifier(StateListener notifier){
@@ -65,6 +67,8 @@ public class Circuit{
         if(unit instanceof UnitOutput){
             UnitOutput output = (UnitOutput)unit;
             output.setListener(output_listender);
+        }else if(unit instanceof UnitClock){
+            clockes.add(pos);
         }
 
         evaluate(unit.getNodeSet());
@@ -89,6 +93,9 @@ public class Circuit{
                 System.out.println("break wire and generate [" + s + "]");
             }
         }else{
+            if(unit instanceof UnitClock){
+                clockes.remove(unit.getPos());
+            }
             data.removeCell(cell);
         }
 
@@ -112,6 +119,17 @@ public class Circuit{
         return output.getState();
     }
 
+    public void update(float dt){
+        for(Cell c : clockes){
+            UnitClock clock  = (UnitClock)data.getUnit(c);
+            float t = dt;
+            Set<Node> clocknodes = clock.getNodeSet();
+            while(clock.update(t)){
+                t = 0;
+                evaluate(clocknodes);
+            }
+        }
+    }
 
     private Node neighborNode(Cell pos, Dir dir){
         Unit unit = data.getUnit(pos);

@@ -67,7 +67,7 @@ public abstract class BlockIO extends BlockUnit {
         return state;
     }
 
-    boolean setBlockCircuitState(World world, BlockPos pos){
+    boolean getBlockCircuitState(World world, BlockPos pos){
         return world.getBlockState(pos).getValue(PROPERTYSTATE);
     }
 

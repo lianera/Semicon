@@ -30,7 +30,7 @@ public class BlockPin extends BlockInput {
         if (facing == handonface)
             return false;
         if(apply) {
-            boolean state = setBlockCircuitState(worldIn, pos);
+            boolean state = getBlockCircuitState(worldIn, pos);
             state = !state;
             setBlockCircuitState(worldIn, pos, state);
             Cell cell = Util.blockPosToCell(pos);
