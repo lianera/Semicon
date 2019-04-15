@@ -1,7 +1,6 @@
 package io.github.liamtuan.semicon.sim;
 
 import com.google.gson.JsonObject;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import io.github.liamtuan.semicon.sim.core.Node;
 import org.json.JSONObject;
 

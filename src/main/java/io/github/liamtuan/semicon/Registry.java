@@ -8,8 +8,10 @@ import io.github.liamtuan.semicon.blocks.wire.*;
 import io.github.liamtuan.semicon.sim.StateListener;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
@@ -32,6 +34,19 @@ public class Registry {
     public static Block led;
     public static Block xorgate;
     public static Block srlatch;
+    public static final CreativeTabs tab_semicon = new CreativeTabs("semicon") {
+
+        @Override
+        public ItemStack getTabIconItem() {
+            return new ItemStack(clock);
+        }
+
+        @Override
+        public boolean hasSearchBar() {
+            return false;
+        }
+
+    };
 
     static void preInit(){
         andgate = new BlockAndGate();
@@ -47,6 +62,7 @@ public class Registry {
         led = new BlockLed();
         xorgate = new BlockXorGate();
         srlatch = new BlockSrLatchGate();
+
     }
 
     static Block[] allBlocks(){
@@ -60,6 +76,9 @@ public class Registry {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
+        for(Block block : allBlocks()){
+            block.setCreativeTab(tab_semicon);
+        }
         event.getRegistry().registerAll(allBlocks());
 
     }
@@ -68,7 +87,10 @@ public class Registry {
     public static void registerItemBlocks(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
         for(Block block : allBlocks()){
-            registry.register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+            registry.register(
+                    new ItemBlock(block)
+                    .setRegistryName(block.getRegistryName())
+            );
         }
     }
 

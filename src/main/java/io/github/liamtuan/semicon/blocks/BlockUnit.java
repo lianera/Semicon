@@ -20,6 +20,7 @@ public abstract class BlockUnit extends Block {
     }
     public BlockUnit(Material material){
         super(material);
+
     }
 
     abstract public Unit createUnit(World worldIn, BlockPos pos);

@@ -1,6 +1,5 @@
 package io.github.liamtuan.semicon.sim;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import io.github.liamtuan.semicon.sim.core.Node;
 import org.json.JSONArray;
 import org.json.JSONObject;

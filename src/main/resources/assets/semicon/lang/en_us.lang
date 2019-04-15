@@ -11,3 +11,8 @@ tile.wirefull.name=Wire Full
 tile.pin.name=Pin
 tile.clock.name=Clock
 tile.led.name=LED
+
+tile.xorgate.name=Xor Gate
+tile.srlatchgate.name=SR Latch
+
+itemGroup.semicon=Semicon
