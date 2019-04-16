@@ -4,8 +4,7 @@ import net.minecraft.util.EnumFacing;
 
 public class BlockSrLatchGate extends BlockGate{
     public BlockSrLatchGate() {
-        setRegistryName("srlatchgate");
-        setUnlocalizedName("srlatchgate");
+        super("srlatchgate");
     }
 
     @Override

@@ -2,7 +2,6 @@ package io.github.liamtuan.semicon;
 
 import io.github.liamtuan.semicon.sim.Cell;
 import io.github.liamtuan.semicon.sim.Dir;
-import jdk.nashorn.internal.ir.Block;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 

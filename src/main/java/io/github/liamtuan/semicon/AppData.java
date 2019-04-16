@@ -4,6 +4,7 @@ import io.github.liamtuan.semicon.sim.Circuit;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldSavedData;
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,13 +28,21 @@ public class AppData extends WorldSavedData {
         System.out.println("read circuit data");
         byte[] data = nbt.getByteArray(IDENTIFIER);
         String rawjson = gunzip(data);
-        App.setCircuit(Circuit.fromJson(rawjson));
+        JSONObject obj = new JSONObject(rawjson);
+        String version = obj.getString("version");
+        if(!version.equals(App.VERSION)) {
+            System.out.println("version not match, will not build circuit");
+            return;
+        }
+        App.setCircuit(Circuit.fromJson(obj));
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         System.out.println("write circuit data");
-        String rawjson = App.getCircuit().toJson();
+        JSONObject obj = App.getCircuit().toJson();
+        obj.put("version", App.VERSION);
+        String rawjson = obj.toString();
         byte[] compressed = gzip(rawjson);
         compound.setByteArray(IDENTIFIER, compressed);
         return compound;

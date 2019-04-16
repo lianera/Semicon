@@ -20,8 +20,7 @@ public class BlockClock extends BlockUnit {
     public static final PropertyInteger PROPERTY_FREQUENCY = PropertyInteger.create("frequency", 0, maxfreq);
 
     public BlockClock() {
-        setRegistryName("clock");
-        setUnlocalizedName("clock");
+        super("clock");
     }
 
     @Override
@@ -41,7 +40,7 @@ public class BlockClock extends BlockUnit {
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        EnumFacing facing = EnumFacing.getHorizontal(meta);
+        EnumFacing facing = EnumFacing.byHorizontalIndex(meta);
         int freq = (meta >> 2)&0x3;
         return this.getDefaultState().withProperty(PROPERTYFACING, facing).withProperty(PROPERTY_FREQUENCY, freq);
     }

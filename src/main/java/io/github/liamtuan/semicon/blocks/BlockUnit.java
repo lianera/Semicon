@@ -15,12 +15,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public abstract class BlockUnit extends Block {
-    public BlockUnit() {
-        super(Material.IRON);
+    public BlockUnit(String name) {
+        this(name, Material.IRON);
     }
-    public BlockUnit(Material material){
+    public BlockUnit(String name, Material material){
         super(material);
-
+        setRegistryName(name);
+        setTranslationKey(App.MODID + "." + name);
     }
 
     abstract public Unit createUnit(World worldIn, BlockPos pos);

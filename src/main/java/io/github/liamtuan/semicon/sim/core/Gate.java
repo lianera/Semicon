@@ -1,6 +1,12 @@
 package io.github.liamtuan.semicon.sim.core;
 
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashSet;
+import java.util.Map;
+
 public abstract class Gate{
     public abstract Node[] getInputNodes();
     public abstract Node[] getOutputNodes();

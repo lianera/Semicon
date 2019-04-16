@@ -21,6 +21,8 @@ import java.util.Map;
 @Mod(modid = App.MODID)
 public class App {
     public static final String MODID = "semicon";
+    public static final String VERSION = "0.1.0";
+
     private static StateListener output_notifier;
     private static Map<BlockPos, Boolean> output_changed;
     private static Circuit circuit;

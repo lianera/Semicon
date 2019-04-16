@@ -1,5 +1,8 @@
 package io.github.liamtuan.semicon.sim.core;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.*;
 
 public class Node {
@@ -59,7 +62,7 @@ public class Node {
 
     @Override
     public String toString() {
-        return "Node" + id;
+        return "Node" + id + state;
     }
 
     public void merge(Node node){
@@ -89,4 +92,6 @@ public class Node {
         if(node.state)
             this.state = true;
     }
+
+    
 }

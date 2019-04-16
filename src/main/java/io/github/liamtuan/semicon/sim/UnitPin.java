@@ -2,8 +2,13 @@ package io.github.liamtuan.semicon.sim;
 
 import com.google.gson.JsonObject;
 import io.github.liamtuan.semicon.sim.core.Node;
+import org.jline.utils.WriterOutputStream;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,6 +71,7 @@ public class UnitPin extends UnitInput {
         Cell pos = Cell.fromString(obj.getString("pos"));
         Dir dir = Dir.valueOf(obj.getString("dir"));
         boolean state = obj.getBoolean("state");
+        
         return new UnitPin(pos, dir, state);
     }
 }

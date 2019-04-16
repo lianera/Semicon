@@ -22,9 +22,7 @@ public class BlockPin extends BlockUnit {
     public static final PropertyBool PROPERTYSTATE = PropertyBool.create("state");
 
     public BlockPin() {
-        setRegistryName("pin");
-        setUnlocalizedName("pin");
-
+        super("pin");
     }
 
     @Override
@@ -60,7 +58,7 @@ public class BlockPin extends BlockUnit {
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        EnumFacing facing = EnumFacing.getHorizontal(meta);
+        EnumFacing facing = EnumFacing.byHorizontalIndex(meta);
         boolean on_off_state = (meta & 0x4) != 0;
         return this.getDefaultState().withProperty(PROPERTYFACING, facing).withProperty(PROPERTYSTATE, on_off_state);
     }

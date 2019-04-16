@@ -7,8 +7,7 @@ import net.minecraft.util.EnumFacing;
 
 public class BlockOrGate extends BlockGate {
     public BlockOrGate() {
-        setRegistryName("orgate");
-        setUnlocalizedName("orgate");
+        super("orgate");
     }
 
     @Override

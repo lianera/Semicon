@@ -5,8 +5,7 @@ import net.minecraft.util.EnumFacing;
 
 public class BlockXorGate extends BlockGate {
     public BlockXorGate() {
-        setRegistryName("xorgate");
-        setUnlocalizedName("xorgate");
+        super("xorgate");
     }
 
     @Override

@@ -34,18 +34,11 @@ public class Registry {
     public static Block led;
     public static Block xorgate;
     public static Block srlatch;
-    public static final CreativeTabs tab_semicon = new CreativeTabs("semicon") {
-
+    public static final CreativeTabs tab_semicon = new CreativeTabs(App.MODID) {
         @Override
-        public ItemStack getTabIconItem() {
+        public ItemStack createIcon() {
             return new ItemStack(clock);
         }
-
-        @Override
-        public boolean hasSearchBar() {
-            return false;
-        }
-
     };
 
     static void preInit(){

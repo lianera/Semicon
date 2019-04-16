@@ -5,8 +5,7 @@ import net.minecraft.util.EnumFacing;
 public class BlockWireFull extends BlockWire {
 
     public BlockWireFull(){
-        setRegistryName("wirefull");
-        setUnlocalizedName("wirefull");
+        super("wirefull");
     }
 
     @Override

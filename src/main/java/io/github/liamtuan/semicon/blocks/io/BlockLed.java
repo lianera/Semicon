@@ -23,8 +23,7 @@ public class BlockLed extends BlockUnit implements BlockOutput{
     public static final PropertyBool PROPERTYSTATE = PropertyBool.create("state");
 
     public BlockLed() {
-        setRegistryName("led");
-        setUnlocalizedName("led");
+        super("led");
         setLightLevel(0.5f);
     }
 

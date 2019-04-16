@@ -5,8 +5,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class BlockWireAll extends BlockWire{
     public BlockWireAll() {
-        setRegistryName("wireall");
-        setUnlocalizedName("wireall");
+        super("wireall");
     }
 
     @Override

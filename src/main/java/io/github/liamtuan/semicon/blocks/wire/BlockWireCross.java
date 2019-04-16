@@ -4,8 +4,7 @@ import net.minecraft.util.EnumFacing;
 
 public class BlockWireCross extends BlockWire {
     public BlockWireCross(){
-        setRegistryName("wirecross");
-        setUnlocalizedName("wirecross");
+        super("wirecross");
     }
 
     @Override

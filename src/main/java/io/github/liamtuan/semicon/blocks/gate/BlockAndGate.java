@@ -7,9 +7,7 @@ import net.minecraft.util.EnumFacing;
 
 public class BlockAndGate extends BlockGate {
     public BlockAndGate() {
-        setRegistryName("andgate");
-        setUnlocalizedName("andgate");
-
+        super("andgate");
     }
 
     @Override

@@ -4,8 +4,6 @@ package io.github.liamtuan.semicon.sim;
 import io.github.liamtuan.semicon.sim.core.Analyser;
 import io.github.liamtuan.semicon.sim.core.Node;
 import io.github.liamtuan.semicon.sim.core.Processor;
-import io.github.liamtuan.semicon.sim.UnitInput;
-import io.github.liamtuan.semicon.sim.UnitOutput;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -288,22 +286,24 @@ public class Circuit{
         System.out.println(data.nodeTableString());
     }
 
-    public String toJson(){
+    public JSONObject toJson(){
         JSONArray unitarr = new JSONArray();
         Set<Unit> units = data.getAllUnits();
         for(Unit unit : units){
             unitarr.put(unit.toJson());
         }
-        return unitarr.toString();
+        JSONObject obj = new JSONObject();
+        obj.put("circuit", unitarr);
+        return obj;
     }
 
-    public static Circuit fromJson(String json){
-        JSONArray unitarr = new JSONArray(json);
+    public static Circuit fromJson(JSONObject obj){
+        JSONArray unitarr = obj.getJSONArray("circuit");
         Circuit circuit = new Circuit();
 
         for(int i = 0; i < unitarr.length(); i++){
-            JSONObject obj = unitarr.getJSONObject(i);
-            Unit unit = Unit.createUnitFromJson(obj);
+            JSONObject unitobj = unitarr.getJSONObject(i);
+            Unit unit = Unit.createUnitFromJson(unitobj);
             circuit.add(unit);
         }
         return circuit;

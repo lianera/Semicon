@@ -20,8 +20,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public abstract class BlockWire extends BlockUnit {
     public static final PropertyDirection PROPERTYFACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
-    BlockWire() {
-        super(Material.IRON);
+    BlockWire(String name) {
+        super(name);
     }
 
     @SideOnly(Side.CLIENT)
@@ -84,7 +84,7 @@ public abstract class BlockWire extends BlockUnit {
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        EnumFacing facing = EnumFacing.getHorizontal(meta);
+        EnumFacing facing = EnumFacing.byHorizontalIndex(meta);
         return this.getDefaultState().withProperty(PROPERTYFACING, facing);
     }
 

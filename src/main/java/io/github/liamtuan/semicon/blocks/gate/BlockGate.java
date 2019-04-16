@@ -19,8 +19,8 @@ import net.minecraft.world.World;
 public abstract class BlockGate extends BlockUnit {
     public static final PropertyDirection PROPERTYFACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
-    BlockGate() {
-        super(Material.IRON);
+    BlockGate(String name) {
+        super(name);
     }
 
     abstract String getGateType();
@@ -65,7 +65,7 @@ public abstract class BlockGate extends BlockUnit {
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        EnumFacing facing = EnumFacing.getHorizontal(meta);
+        EnumFacing facing = EnumFacing.byHorizontalIndex(meta);
         return this.getDefaultState().withProperty(PROPERTYFACING, facing);
     }
 

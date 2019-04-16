@@ -4,8 +4,7 @@ import net.minecraft.util.EnumFacing;
 
 public class BlockWireBar extends BlockWire{
     public BlockWireBar(){
-        setRegistryName("wirebar");
-        setUnlocalizedName("wirebar");
+        super("wirebar");
     }
 
     @Override
