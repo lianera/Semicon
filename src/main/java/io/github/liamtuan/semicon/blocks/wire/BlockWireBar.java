@@ -8,10 +8,10 @@ public class BlockWireBar extends BlockWire{
     }
 
     @Override
-    EnumFacing[] getLocalFaces() {
-        return new EnumFacing[]{
+    EnumFacing[][] getLocalFaceGroups() {
+        return new EnumFacing[][]{{
             EnumFacing.NORTH,
             EnumFacing.SOUTH
-        };
+        }};
     }
 }

@@ -2,17 +2,18 @@ tile.semicon.andgate.name=And Gate
 tile.semicon.orgate.name=Or Gate
 tile.semicon.notgate.name=Not Gate
 
+tile.semicon.xorgate.name=Xor Gate
+tile.semicon.srlatchgate.name=SR Latch
+
 tile.semicon.wirebar.name=Wire Bar
 tile.semicon.wirecorner.name=Wire Corner
 tile.semicon.wiret.name=Wire T
 tile.semicon.wirecross.name=Wire Cross
 tile.semicon.wirefull.name=Wire Full
+tile.semicon.wirecrossbridge.name=Wire Cross Bridge
 
 tile.semicon.pin.name=Pin
 tile.semicon.clock.name=Clock
 tile.semicon.led.name=LED
-
-tile.semicon.xorgate.name=Xor Gate
-tile.semicon.srlatchgate.name=SR Latch
 
 itemGroup.semicon=Semicon

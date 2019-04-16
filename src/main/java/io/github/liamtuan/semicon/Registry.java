@@ -24,16 +24,17 @@ public class Registry {
     public static Block andgate;
     public static Block orgate;
     public static Block notgate;
+    public static Block xorgate;
+    public static Block srlatch;
     public static Block wire_bar;
     public static Block wire_corner;
     public static Block wire_t;
     public static Block wire_cross;
+    public static Block wire_cross_bridge;
     public static Block wire_full;
     public static Block pin;
     public static Block clock;
     public static Block led;
-    public static Block xorgate;
-    public static Block srlatch;
     public static final CreativeTabs tab_semicon = new CreativeTabs(App.MODID) {
         @Override
         public ItemStack createIcon() {
@@ -45,25 +46,26 @@ public class Registry {
         andgate = new BlockAndGate();
         orgate = new BlockOrGate();
         notgate = new BlockNotGate();
+        xorgate = new BlockXorGate();
+        srlatch = new BlockSrLatchGate();
         wire_bar = new BlockWireBar();
         wire_corner = new BlockWireCorner();
         wire_t = new BlockWireT();
         wire_cross = new BlockWireCross();
+        wire_cross_bridge = new BlockWireCrossBridge();
         wire_full = new BlockWireFull();
         pin = new BlockPin();
         clock = new BlockClock();
         led = new BlockLed();
-        xorgate = new BlockXorGate();
-        srlatch = new BlockSrLatchGate();
 
     }
 
     static Block[] allBlocks(){
         return new Block[]{
                 andgate, orgate, notgate,
-                wire_bar, wire_corner, wire_t, wire_cross, wire_full,
+                xorgate, srlatch,
+                wire_bar, wire_corner, wire_t, wire_cross, wire_cross_bridge, wire_full,
                 pin, clock, led,
-                xorgate, srlatch
         };
     }
 

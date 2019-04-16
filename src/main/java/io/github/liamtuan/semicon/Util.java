@@ -43,5 +43,17 @@ public class Util {
         return dirs;
     }
 
-
+    public static Dir[][] localFaceGroupsToWorldDirGroups(EnumFacing[][] face_groups, EnumFacing base) {
+        Dir basedir = Util.facingToDir(base);
+        Dir[][] dir_groups = new Dir[face_groups.length][];
+        for(int i = 0; i < face_groups.length; i++){
+            EnumFacing[] faces = face_groups[i];
+            Dir[] dirs = new Dir[faces.length];
+            for(int j = 0; j < faces.length; j++){
+                dirs[j] = Util.facingToDir(faces[j]).horizOffsetDir(basedir);
+            }
+            dir_groups[i] = dirs;
+        }
+        return dir_groups;
+    }
 }

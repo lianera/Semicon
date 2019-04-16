@@ -45,14 +45,14 @@ public abstract class BlockWire extends BlockUnit {
         return EnumBlockRenderType.MODEL;
     }
 
-    abstract EnumFacing[] getLocalFaces();
+    abstract EnumFacing[][] getLocalFaceGroups();
 
     @Override
     public Unit createUnit(World worldIn, BlockPos pos) {
         EnumFacing block_facing = getBlockFacing(worldIn, pos);
         Cell cell = Util.blockPosToCell(pos);
-        Dir[] dirs = Util.localFacesToWorldDirs(getLocalFaces(), block_facing);
-        UnitWire wire = new UnitWire(cell, dirs);
+        Dir[][] dir_groups = Util.localFaceGroupsToWorldDirGroups(getLocalFaceGroups(), block_facing);
+        UnitWire wire = new UnitWire(cell, dir_groups);
         return wire;
     }
 

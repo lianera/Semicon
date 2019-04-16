@@ -8,11 +8,11 @@ public class BlockWireT extends BlockWire {
     }
 
     @Override
-    EnumFacing[] getLocalFaces() {
-        return new EnumFacing[]{
+    EnumFacing[][] getLocalFaceGroups() {
+        return new EnumFacing[][]{{
                 EnumFacing.WEST,
                 EnumFacing.NORTH,
                 EnumFacing.EAST
-        };
+        }};
     }
 }

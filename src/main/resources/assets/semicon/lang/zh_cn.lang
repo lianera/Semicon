@@ -1,18 +1,18 @@
 tile.semicon.andgate.name=与门
 tile.semicon.orgate.name=或门
 tile.semicon.notgate.name=非门
+tile.semicon.xorgate.name=异或门
+tile.semicon.srlatchgate.name=SR锁存器
 
 tile.semicon.wirebar.name=一字导线
 tile.semicon.wirecorner.name=L型导线
 tile.semicon.wiret.name=T型导线
 tile.semicon.wirecross.name=十字导线
 tile.semicon.wirefull.name=全向导线
+tile.semicon.wirecrossbridge.name=十字桥导线
 
 tile.semicon.pin.name=输入端
 tile.semicon.clock.name=时钟信号源
 tile.semicon.led.name=LED
-
-tile.semicon.xorgate.name=异或门
-tile.semicon.srlatchgate.name=SR锁存器
 
 itemGroup.semicon=半导体

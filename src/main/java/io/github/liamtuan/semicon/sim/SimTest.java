@@ -4,6 +4,7 @@ import io.github.liamtuan.semicon.App;
 import io.github.liamtuan.semicon.AppData;
 import io.github.liamtuan.semicon.sim.core.Analyser;
 import io.github.liamtuan.semicon.sim.core.Node;
+import org.json.JSONObject;
 import org.lwjgl.Sys;
 
 import static io.github.liamtuan.semicon.sim.Dir.*;
@@ -97,7 +98,8 @@ public class SimTest {
         circuit.add(wire4);
 
         // serialize test
-        circuit.fromJson(circuit.toJson());
+        String jsonstr = circuit.toJson().toString();
+        circuit.fromJson(new JSONObject(jsonstr));
 
 
         circuit.setInpuState(pin.getPos(), true);
@@ -191,6 +193,21 @@ public class SimTest {
             return false;
 
         //System.out.println(circuit.toJson());
+        return true;
+    }
+
+    private boolean wireBridgeTest(){
+        Circuit circuit = new Circuit();
+
+        UnitPin pin = new UnitPin(new Cell(0, 0, -1), POSZ);
+        circuit.add(pin);
+        UnitWire wirebridge = new UnitWire(new Cell(0, 0, 0), new Dir[][]{{POSX, NEGX},{POSZ, NEGZ}});
+        circuit.add(wirebridge);
+        UnitLed led = new UnitLed(new Cell(0, 0, 1));
+        circuit.add(led);
+
+        if(!circuit.getOutputState(led.getPos()))
+            return false;
         return true;
     }
 

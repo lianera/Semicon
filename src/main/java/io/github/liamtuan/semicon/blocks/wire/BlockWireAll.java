@@ -9,15 +9,15 @@ public class BlockWireAll extends BlockWire{
     }
 
     @Override
-    EnumFacing[] getLocalFaces() {
-        return new EnumFacing[]{
+    EnumFacing[][] getLocalFaceGroups() {
+        return new EnumFacing[][]{{
                 EnumFacing.NORTH,
                 EnumFacing.EAST,
                 EnumFacing.SOUTH,
                 EnumFacing.WEST,
                 EnumFacing.UP,
                 EnumFacing.DOWN
-        };
+        }};
     }
 
 

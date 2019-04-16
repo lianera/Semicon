@@ -8,16 +8,30 @@ import java.util.*;
 
 public class UnitWire extends Unit {
     private Node[] nodes;
-    private Dir[] faces;
+    private Dir[][] face_groups;
     public UnitWire(Cell pos, Dir[] faces) {
         super(pos);
-        this.faces = faces;
+        this.face_groups = new Dir[1][];
+        this.face_groups[0] = faces;
 
         nodes = new Node[Dir.DIRNUM];
 
         Node node = new Node();
         for(Dir dir : faces)
             nodes[dir.index()] = node;
+    }
+
+    public UnitWire(Cell pos, Dir[][] connected_face_groups){
+        super(pos);
+        this.face_groups = connected_face_groups;
+
+        nodes = new Node[Dir.DIRNUM];
+        for(Dir[] connected_faces : connected_face_groups){
+            Node node = new Node();
+            for(Dir face : connected_faces){
+                nodes[face.index()] = node;
+            }
+        }
     }
 
     @Override
@@ -56,21 +70,30 @@ public class UnitWire extends Unit {
         JSONObject obj = new JSONObject();
         obj.put("type", "wire");
         obj.put("pos", getPos().toString());
-        JSONArray facearr = new JSONArray();
-        for(Dir face : faces) {
-            facearr.put(face);
+        JSONArray face_group_arr = new JSONArray();
+        for(Dir[] faces : face_groups) {
+            JSONArray facearr = new JSONArray();
+            for(Dir face : faces){
+                facearr.put(face.toString());
+            }
+            face_group_arr.put(facearr);
         }
-        obj.put("faces", facearr);
+        obj.put("face_groups", face_group_arr);
         return obj;
     }
 
     static UnitWire fromJson(JSONObject obj){
         Cell pos = Cell.fromString(obj.getString("pos"));
-        JSONArray facearr = obj.getJSONArray("faces");
-        Dir[] faces = new Dir[facearr.length()];
-        for(int i = 0; i < facearr.length(); i++){
-            faces[i] = Dir.valueOf(facearr.getString(i));
+        JSONArray face_group_arr = obj.getJSONArray("face_groups");
+        Dir[][] face_groups = new Dir[face_group_arr.length()][];
+        for(int i = 0; i < face_group_arr.length(); i++){
+            JSONArray facearr = face_group_arr.getJSONArray(i);
+            Dir[] faces = new Dir[facearr.length()];
+            for(int j = 0; j < facearr.length(); j++){
+                faces[j] = Dir.valueOf(facearr.getString(j));
+            }
+            face_groups[i] = faces;
         }
-        return new UnitWire(pos, faces);
+        return new UnitWire(pos, face_groups);
     }
 }
