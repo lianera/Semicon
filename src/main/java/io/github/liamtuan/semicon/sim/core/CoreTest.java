@@ -19,147 +19,74 @@ public class CoreTest {
             System.out.println("stacked test failed");
         if(!latchTest())
             System.out.println("latch test failed");
+        if(!threeStateGateTest())
+            System.out.println("three state gate test");
     }
 
     boolean gateTest(){
-        Processor p = new Processor();
-        Node x1 = new Node();
-        Node x2 = new Node();
-        Node y = new Node();
-
         // and gate
-        Gate and = new AndGate();
-        and.setInputNodes(new Node[]{x1, x2});
-        and.setOutputNodes(new Node[]{y});
-        and.attach();
-
-        Node[] nodes = new Node[]{x1, x2, y};
-        Node[] events = new Node[]{x1, x2, y};
-        int[] expect = new int[]{0, 0, 0};
-        p.eval(events);
-        if(!compareStates(nodes, expect))
+        if(!truthValueTest("and", new int[]{0,0}, new int[]{0}))
             return false;
-
-        x1.setState(true);
-        events = new Node[]{x1};
-        p.eval(events);
-        expect = new int[]{1, 0, 0};
-        if(!compareStates(nodes, expect))
+        if(!truthValueTest("and", new int[]{0,1}, new int[]{0}))
             return false;
-
-        x2.setState(true);
-        events = new Node[]{x2};
-        p.eval(events);
-        expect = new int[]{1, 1, 1};
-        if(!compareStates(nodes, expect))
+        if(!truthValueTest("and", new int[]{1,0}, new int[]{0}))
             return false;
-
-        x1.setState(false);
-        events = new Node[]{x1};
-        p.eval(events);
-        expect = new int[]{0, 1, 0};
-        if(!compareStates(nodes, expect))
+        if(!truthValueTest("and", new int[]{1,1}, new int[]{1}))
             return false;
-
-        and.dettach();
 
         // or gate
-        Gate or = new OrGate();
-        or.setInputNodes(new Node[]{x1, x2});
-        or.setOutputNodes(new Node[]{y});
-        or.attach();
-
-        x1.setState(false);
-        x2.setState(false);
-        y.setState(false);
-        events = new Node[]{x1, x2, y};
-        expect = new int[]{0, 0, 0};
-        p.eval(events);
-        if(!compareStates(nodes, expect))
+        if(!truthValueTest("or", new int[]{0,0}, new int[]{0}))
             return false;
-
-        x1.setState(true);
-        events = new Node[]{x1};
-        p.eval(events);
-        expect = new int[]{1, 0, 1};
-        if(!compareStates(nodes, expect))
+        if(!truthValueTest("or", new int[]{0,1}, new int[]{1}))
             return false;
-
-        x2.setState(true);
-        events = new Node[]{x2};
-        p.eval(events);
-        expect = new int[]{1, 1, 1};
-        if(!compareStates(nodes, expect))
+        if(!truthValueTest("or", new int[]{1,0}, new int[]{1}))
             return false;
-
-        x1.setState(false);
-        events = new Node[]{x1};
-        p.eval(events);
-        expect = new int[]{0, 1, 1};
-        if(!compareStates(nodes, expect))
+        if(!truthValueTest("or", new int[]{1,1}, new int[]{1}))
             return false;
-
-        or.dettach();
-
 
         // xor gate
-        Gate xor = new XorGate();
-        xor.setInputNodes(new Node[]{x1, x2});
-        xor.setOutputNodes(new Node[]{y});
-        xor.attach();
-
-        x1.setState(false);
-        x2.setState(false);
-        y.setState(false);
-        events = new Node[]{x1, x2, y};
-        expect = new int[]{0, 0, 0};
-        p.eval(events);
-        if(!compareStates(nodes, expect))
+        if(!truthValueTest("xor", new int[]{0,0}, new int[]{0}))
             return false;
-
-        x1.setState(true);
-        events = new Node[]{x1};
-        p.eval(events);
-        expect = new int[]{1, 0, 1};
-        if(!compareStates(nodes, expect))
+        if(!truthValueTest("xor", new int[]{0,1}, new int[]{1}))
             return false;
-
-        x2.setState(true);
-        events = new Node[]{x2};
-        p.eval(events);
-        expect = new int[]{1, 1, 0};
-        if(!compareStates(nodes, expect))
+        if(!truthValueTest("xor", new int[]{1,0}, new int[]{1}))
             return false;
-
-        x1.setState(false);
-        events = new Node[]{x1};
-        p.eval(events);
-        expect = new int[]{0, 1, 1};
-        if(!compareStates(nodes, expect))
+        if(!truthValueTest("xor", new int[]{1,1}, new int[]{0}))
             return false;
-
-        xor.dettach();
 
         // not gate
-        Gate not = new NotGate();
-        not.setInputNodes(new Node[]{x1});
-        not.setOutputNodes(new Node[]{y});
-        not.attach();
+        if(!truthValueTest("not", new int[]{0}, new int[]{1}))
+            return false;
+        if(!truthValueTest("not", new int[]{1}, new int[]{0}))
+            return false;
+        return true;
+    }
 
-        x1.setState(false);
-        y.setState(false);
-        nodes = new Node[]{x1, y};
-        events = new Node[]{x1, y};
-        expect = new int[]{0, 1};
+
+    boolean threeStateGateTest(){
+        Processor p = new Processor();
+        Node x = new Node();
+        Node en = new Node();
+        Node y = new Node();
+        ThreeStateGate threstate = new ThreeStateGate();
+        threstate.setInputNodes(new Node[]{x, en});
+        threstate.setOutputNodes(new Node[]{y});
+        threstate.attach();
+
+        y.setState(true);
+        Node[] events = new Node[]{x, en, y};
         p.eval(events);
-        if(!compareStates(nodes, expect))
+        if(!compareStates(events, new int[]{0, 0, 1}))
             return false;
 
-        x1.setState(true);
-        events = new Node[]{x1};
-        expect = new int[]{1, 0};
+        en.setState(true);
         p.eval(events);
-        if(!compareStates(nodes, expect))
+        if(!compareStates(events, new int[]{0, 1, 0}))
+            return false;
+
+        x.setState(true);
+        p.eval(events);
+        if(!compareStates(events, new int[]{1, 1, 1}))
             return false;
 
         return true;
@@ -370,6 +297,33 @@ public class CoreTest {
         p.eval(nodes.toArray(new Node[0]));
         if(y.getState() != expect)
             return false;
+        return true;
+    }
+
+
+    private boolean truthValueTest(String gatename, int[] input_states, int[] output_states){
+        Gate gate = Gate.createGateFromName(gatename);
+        gate.dettach();
+        Node[] inputnodes = new Node[input_states.length];
+        for(int i = 0; i < input_states.length; i++){
+            inputnodes[i] = new Node();
+            inputnodes[i].setState(input_states[i]!=0);
+        }
+        gate.setInputNodes(inputnodes);
+
+        Node[] outputnodes = new Node[output_states.length];
+        for(int i = 0; i < output_states.length; i++){
+            outputnodes[i] = new Node();
+        }
+        gate.setOutputNodes(outputnodes);
+        gate.attach();
+        Processor p = new Processor();
+        p.eval(inputnodes);
+        for(int i = 0; i < output_states.length; i++) {
+            boolean expect = output_states[i] != 0;
+            if(outputnodes[i].getState() != expect)
+                return false;
+        }
         return true;
     }
 

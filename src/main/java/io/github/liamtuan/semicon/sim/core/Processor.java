@@ -49,7 +49,7 @@ public class Processor {
         while(!gate_queue.isEmpty()){
             Gate gate = gate_queue.poll();
             boolean[] oldstates = gateOutStates(gate);
-            gate.evel();
+            gate.eval();
             Node[] outs = gate.getOutputNodes();
             for(int i = 0; i < outs.length; i++){
                 if(outs[i].getState() != oldstates[i])

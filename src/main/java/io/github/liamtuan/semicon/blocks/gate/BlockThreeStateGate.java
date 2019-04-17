@@ -1,0 +1,25 @@
+package io.github.liamtuan.semicon.blocks.gate;
+
+import net.minecraft.util.EnumFacing;
+
+public class BlockThreeStateGate extends BlockGate{
+    public BlockThreeStateGate() {
+        super("threestategate");
+    }
+
+    @Override
+    String getGateType() {
+        return "threestate";
+    }
+
+    @Override
+    EnumFacing[] getLocalInputFaces() {
+        return new EnumFacing[]{EnumFacing.SOUTH, EnumFacing.EAST};
+    }
+
+    @Override
+    EnumFacing[] getLocalOutputFaces() {
+        return new EnumFacing[]{EnumFacing.NORTH};
+    }
+
+}

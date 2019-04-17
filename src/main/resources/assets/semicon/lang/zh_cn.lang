@@ -3,6 +3,7 @@ tile.semicon.orgate.name=或门
 tile.semicon.notgate.name=非门
 tile.semicon.xorgate.name=异或门
 tile.semicon.srlatchgate.name=SR锁存器
+tile.semicon.threestategate.name=三态门
 
 tile.semicon.wirebar.name=一字导线
 tile.semicon.wirecorner.name=L型导线

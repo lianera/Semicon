@@ -12,7 +12,7 @@ public abstract class Gate{
     public abstract Node[] getOutputNodes();
     public abstract void setInputNodes(Node[] nodes);
     public abstract void setOutputNodes(Node[] nodes);
-    public abstract void evel();
+    public abstract void eval();
 
     private static int ID_ = 0;
     private int id;
@@ -88,6 +88,10 @@ public abstract class Gate{
                 break;
             case "srlatch":
                 gate = new SrLatchGate();
+                break;
+            case "threestate":
+                gate = new ThreeStateGate();
+                break;
         }
         return gate;
     }

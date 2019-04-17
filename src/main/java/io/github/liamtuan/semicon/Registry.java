@@ -1,9 +1,7 @@
 package io.github.liamtuan.semicon;
 
 import io.github.liamtuan.semicon.blocks.gate.*;
-import io.github.liamtuan.semicon.blocks.io.BlockClock;
-import io.github.liamtuan.semicon.blocks.io.BlockLed;
-import io.github.liamtuan.semicon.blocks.io.BlockPin;
+import io.github.liamtuan.semicon.blocks.io.*;
 import io.github.liamtuan.semicon.blocks.wire.*;
 import io.github.liamtuan.semicon.sim.StateListener;
 import net.minecraft.block.Block;
@@ -26,6 +24,7 @@ public class Registry {
     public static Block notgate;
     public static Block xorgate;
     public static Block srlatch;
+    public static Block threestategate;
     public static Block wire_bar;
     public static Block wire_corner;
     public static Block wire_t;
@@ -48,6 +47,7 @@ public class Registry {
         notgate = new BlockNotGate();
         xorgate = new BlockXorGate();
         srlatch = new BlockSrLatchGate();
+        threestategate = new BlockThreeStateGate();
         wire_bar = new BlockWireBar();
         wire_corner = new BlockWireCorner();
         wire_t = new BlockWireT();
@@ -63,7 +63,7 @@ public class Registry {
     static Block[] allBlocks(){
         return new Block[]{
                 andgate, orgate, notgate,
-                xorgate, srlatch,
+                xorgate, srlatch, threestategate,
                 wire_bar, wire_corner, wire_t, wire_cross, wire_cross_bridge, wire_full,
                 pin, clock, led,
         };

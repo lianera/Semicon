@@ -5,6 +5,8 @@ tile.semicon.notgate.name=Not Gate
 tile.semicon.xorgate.name=Xor Gate
 tile.semicon.srlatchgate.name=SR Latch
 
+tile.semicon.threestategate.name=Three State Gate
+
 tile.semicon.wirebar.name=Wire Bar
 tile.semicon.wirecorner.name=Wire Corner
 tile.semicon.wiret.name=Wire T

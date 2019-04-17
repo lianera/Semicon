@@ -4,7 +4,7 @@ package io.github.liamtuan.semicon.sim.core;
 public class NotGate extends X1Y1Gate{
 
     @Override
-    public void evel() {
+    public void eval() {
         y.setState(!x.getState());
     }
 

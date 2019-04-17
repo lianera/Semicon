@@ -35,7 +35,7 @@ public class SrLatchGate extends Gate{
     }
 
     @Override
-    public void evel() {
+    public void eval() {
         boolean s_state = s.getState();
         boolean r_state = r.getState();
         if(s_state){

@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "down": "semicon:blocks/gate_blank",
+        "up": "semicon:blocks/threestategate",
+        "north": "semicon:blocks/y_port",
+        "east": "semicon:blocks/e_port",
+        "south": "semicon:blocks/x_port",
+        "west": "semicon:blocks/gate_blank",
+        "particle": "semicon:blocks/threestategate"
+    }
+}
